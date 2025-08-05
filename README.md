@@ -2,11 +2,12 @@
 
 ## 1. Présentation du projet
 
-Nom du projet : `Système d'authentification avec refresh token rotation et gestion de rôle`
+Nom du projet : `AHomeTools` -> `AMANKOU HOME TOOLS` -> `AHT`
 
 ### Objectif du projet :
 
-Ce projet fournit une API d'authentification basé sur refresh token rotation avec la gestion des rôle (admin, user, etc...), écris avec Typescript et Express
+Ce projet est une application web qui a pour but de permettre à ma famille d'enregistrer ses outils dans une base de données et de suivre l'historique des prêts d'outils.
+Ainsi on évite les pertes d'outils et on structure la gestion des outils.
 
 ### Stack technique
 
@@ -22,15 +23,31 @@ Ce projet fournit une API d'authentification basé sur refresh token rotation av
 
 ### Fonctionnalités
 
+`Auth`
+
 - Authentification (register/login/logout)
 
 - Rotation de refresh token
 
 - Gestion des rôles
 
+`Validations`
+
 - Middleware de validation Zod
 
-- Tests à venir
+`Tests`
+
+- Tests
+
+`Main`
+
+- Créer, Editier ou supprimer un emprunteur (Borrower)
+- Créer, Editier ou supprimer un outil (Tools)
+- Créer un emprunt
+- Faire un retour d'emprunt d'outils
+- Gérer l'historique d'emprunt d'un outil/d'un emprunteur
+- Consulter la liste des outils (avec filtre : All, Availiable , Borrowed, Broken, Lost)
+- Consulter l'historique d'emprunt
 
 ## 2. Installation
 

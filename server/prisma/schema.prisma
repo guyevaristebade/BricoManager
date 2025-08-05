@@ -23,9 +23,142 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   loginAt DateTime @default(now())
+  profileId String  @unique
+  project Project[]
+
+  profile UserProfile? // un profile appartient à un utilisateur unique
 }
+
+model UserProfile{
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  avatarUrl String
+  darkMode  Boolean
+
+  user   User @relation(fields: [userId], references: [id]) // un utilisateur à un profile unique 
+}
+
+model Project {
+  id                  String   @id @default(cuid())
+  userId              String
+  projectName         String
+  projectStatus       ProjectStatus @default(PLANNED)
+  projectDescription  String
+  projectStartDate    DateTime
+  projectEndDate      DateTime?
+  createdAt           DateTime @default(now())
+
+  user                User @relation(fields: [userId], references: [id] ,onDelete: Cascade)
+  images              ProjectImage[]  // un projet  peut avoir plusieur image
+}
+
+model ProjectImage {
+  id      String @id @default(cuid())
+  ProjectId  String
+  url     String
+
+  project    Project  @relation(fields: [ProjectId], references: [id], onDelete: Cascade) // une image appartient à un projet 
+}
+
+model Tools{
+  id                String   @id @default(cuid())
+  toolName          String 
+  toolCategoryId    String
+  toolStatus        ToolStatus @default(AVAILABLE)
+  nbBorrowing       Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  category          Category @relation(fields: [toolCategoryId], references: [id]) // un outil appartient à une catégory d'outil
+
+  borrowCartItem    BorrowCartItem[] // un tool peut apparaitre dans plusieurs borrowCartItem
+  borrowHistory     BorrowHistory[]   // un tool peut apparaitre dans plusieurs historique 
+  images            ToolImage[] // un tools peut avoir plusieurs images
+}
+
+model ToolImage {
+  id      String @id @default(cuid())
+  toolId  String
+  url     String
+
+  tool    Tools  @relation(fields: [toolId], references: [id], onDelete: Cascade) // une image appartient à un tool
+}
+
+
+model Category{
+  id                String   @id @default(cuid())
+  categoryName      String
+
+  tools Tools[]     // une catégory contient plusieurs outils 
+}
+
+// relation N-N entre Borrower -> BorrowHistory & Tools  -> BorrowHistory
+model Borrower{
+  id              String   @id @default(cuid())
+  borrowerName    String
+  borrowerAdress  String
+  borrowerTel     String
+  createdAt       DateTime @default(now())
+
+  borrowHistory           BorrowHistory[] // un borrower apparait dans plusieurs historique 
+}
+
+
+// représente un emprunt
+model Borrow{
+  id                  String   @id @default(cuid())
+  borrowerId          String
+  items               BorrowCartItem[]
+  borrowStatus        BorrowStatus @default(IN_PROGRESS)
+  borrowDate          DateTime     @default(now())
+  returnDate          DateTime?
+  createdAt           DateTime @default(now())
+}
+
+// répresente un item dans un emprunt
+model BorrowCartItem{
+  id                  String    @id @default(cuid())
+  toolId              String
+  cartId              String
+
+  cart                Borrow     @relation(fields: [cartId], references: [id], onDelete: Cascade) // un BorrowCartItem appartient à un panier unique 
+  tool                Tools      @relation(fields: [toolId], references: [id], onDelete: Cascade)  // un BorrowCartItem concerne un outil unique
+}
+
+model BorrowHistory {
+  id                  String   @id @default(cuid())
+  toolId              String
+  borrowerId          String
+  borrowingDate       DateTime
+  returnDate          DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  tool                Tools    @relation(fields: [toolId], references: [id], onDelete: Cascade) 
+  borrower            Borrower    @relation(fields: [borrowerId], references: [id], onDelete: Cascade)
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------//
 
 enum Role {
   USER
   ADMIN
 }
+
+enum ToolStatus {
+  AVAILABLE // disponible
+  BORROWED  // emprunté
+  BROKEN    // cassé
+  LOST      // perdu
+}
+
+enum BorrowStatus {
+  IN_PROGRESS // En cours 
+  COMPLETED  // Terminé 
+}
+
+enum ProjectStatus {
+  PLANNED      // planifié
+  IN_PROGRESS  // en cours
+  COMPLETED    //  Terminé
+} 
