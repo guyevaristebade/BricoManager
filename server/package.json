@@ -8,7 +8,10 @@
         "test:watch": "jest --watch",
         "start": "node dist/server.ts",
         "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/server.ts",
-        "format": "prettier --write \"**/*.ts\""
+        "format": "prettier --write \"**/*.ts\"",
+        "db:generate": "prisma generate",
+        "db:seed": "ts-node prisma/seed.ts",
+        "db:studio": "prisma studio"
     },
     "keywords": [],
     "author": "Guy BADE",
@@ -46,5 +49,8 @@
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.8.3"
+    },
+    "prisma": {
+        "seed": "ts-node prisma/seed.ts"
     }
 }

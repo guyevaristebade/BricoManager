@@ -1,6 +1,6 @@
-import { prisma } from 'config';
-import { toolInput } from 'schemas';
-import { ApiResponse } from 'types';
+import { prisma } from '../config';
+import { toolInput } from '../schemas';
+import { ApiResponse } from '../types';
 
 export const toolService = {
     create: async (toolData: toolInput) => {
@@ -12,8 +12,23 @@ export const toolService = {
         };
 
         const tool = await prisma.tool.create({
-            data: toolData,
+            data: {
+                toolName: toolData.toolName,
+                toolCategoryId: toolData.toolCategoryId,
+                toolStatus: 'AVAILABLE',
+                nbLoaning: toolData.nbLoaning,
+                toolPrice: toolData.toolPrice,
+                locationId: toolData.locationId,
+                toolDescription: toolData.toolDescription,
+            },
         });
+
+        //     toolName: string;
+        // toolCategory: string;
+        // toolStatus: "AVAILABLE" | "LOANED" | "BROKEN" | "LOST";
+        // toolPrice: number;
+        // locationId: string;
+        // toolDescription: string;
 
         if (!tool) {
             throw new Error('Failed to create tool');
