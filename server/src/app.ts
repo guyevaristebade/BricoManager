@@ -4,7 +4,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { errorHandler } from './middlewares';
-import { authRouter, userRouter } from './routes';
+import { authRouter, userRouter, toolRouter } from './routes';
+import { limiter } from 'helpers';
 
 dotenv.config();
 
@@ -21,8 +22,11 @@ app.use(
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+app.use(limiter);
+
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
+app.use('/api/tool', toolRouter);
 
 app.use(errorHandler);
 

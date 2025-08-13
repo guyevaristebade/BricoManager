@@ -13,6 +13,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+// Représente un utilisateur
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -23,21 +25,22 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   loginAt DateTime @default(now())
-  profileId String  @unique
   project Project[]
 
   profile UserProfile? // un profile appartient à un utilisateur unique
 }
 
+// Représente le profil d'un utilisateur 
 model UserProfile{
   id        String   @id @default(cuid())
   userId    String   @unique
-  avatarUrl String
-  darkMode  Boolean
+  avatarUrl String?
+  darkMode  Boolean  @default(false)
 
   user   User @relation(fields: [userId], references: [id]) // un utilisateur à un profile unique 
 }
 
+// Représente un projet 
 model Project {
   id                  String   @id @default(cuid())
   userId              String
@@ -46,12 +49,14 @@ model Project {
   projectDescription  String
   projectStartDate    DateTime
   projectEndDate      DateTime?
+  projectBudget       Float
   createdAt           DateTime @default(now())
 
   user                User @relation(fields: [userId], references: [id] ,onDelete: Cascade)
   images              ProjectImage[]  // un projet  peut avoir plusieur image
 }
 
+// Représente une image de projet
 model ProjectImage {
   id      String @id @default(cuid())
   ProjectId  String
@@ -60,83 +65,89 @@ model ProjectImage {
   project    Project  @relation(fields: [ProjectId], references: [id], onDelete: Cascade) // une image appartient à un projet 
 }
 
-model Tools{
+// Représente un outil
+model Tool{
   id                String   @id @default(cuid())
   toolName          String 
   toolCategoryId    String
   toolStatus        ToolStatus @default(AVAILABLE)
-  nbBorrowing       Int
+  toolDescription   String
+  nbLoaning         Int
+  toolPrice         Float
+  locationId        String
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   
   category          Category @relation(fields: [toolCategoryId], references: [id]) // un outil appartient à une catégory d'outil
+  location          Location @relation(fields: [locationId], references: [id]) // un outil appartient à un emplacement
 
-  borrowCartItem    BorrowCartItem[] // un tool peut apparaitre dans plusieurs borrowCartItem
-  borrowHistory     BorrowHistory[]   // un tool peut apparaitre dans plusieurs historique 
+  LoanCartItem    LoanCartItem[] // un tool peut apparaitre dans plusieurs LoanCartItem
   images            ToolImage[] // un tools peut avoir plusieurs images
 }
 
+// représente l'emplacement d'un outil
+model Location {
+  id      String @id @default(cuid())
+  locationName String
+  locationImgUrl  String?
+  tools Tool[] // un emplacement peut contenir plusieurs outils
+}
+
+// représente l'image d'un outil
 model ToolImage {
   id      String @id @default(cuid())
   toolId  String
   url     String
 
-  tool    Tools  @relation(fields: [toolId], references: [id], onDelete: Cascade) // une image appartient à un tool
+  tool    Tool  @relation(fields: [toolId], references: [id], onDelete: Cascade) // une image appartient à un tool
 }
 
-
+// représent la catégorie d'un outil
 model Category{
   id                String   @id @default(cuid())
   categoryName      String
 
-  tools Tools[]     // une catégory contient plusieurs outils 
+  tools Tool[]     // une catégory contient plusieurs outils 
 }
 
-// relation N-N entre Borrower -> BorrowHistory & Tools  -> BorrowHistory
+// Représente un emprunteur 
 model Borrower{
   id              String   @id @default(cuid())
-  borrowerName    String
-  borrowerAdress  String
-  borrowerTel     String
+  BorrowerName    String
+  BorrowerAdress  String
+  BorrowerTel     String
   createdAt       DateTime @default(now())
-
-  borrowHistory           BorrowHistory[] // un borrower apparait dans plusieurs historique 
+  Loan Loan[]
 }
 
 
 // représente un emprunt
-model Borrow{
+model Loan{
   id                  String   @id @default(cuid())
   borrowerId          String
-  items               BorrowCartItem[]
-  borrowStatus        BorrowStatus @default(IN_PROGRESS)
-  borrowDate          DateTime     @default(now())
+  items               LoanCartItem[]
+  loanStatus          LoanStatus @default(IN_PROGRESS)
+  loanDate            DateTime     @default(now())
   returnDate          DateTime?
   createdAt           DateTime @default(now())
+  updateAt            DateTime @updatedAt
+
+  Borrower                Borrower    @relation(fields: [borrowerId], references: [id]) // un emprunt concerne un emprunteur unique  
 }
 
 // répresente un item dans un emprunt
-model BorrowCartItem{
+model LoanCartItem{
   id                  String    @id @default(cuid())
   toolId              String
   cartId              String
-
-  cart                Borrow     @relation(fields: [cartId], references: [id], onDelete: Cascade) // un BorrowCartItem appartient à un panier unique 
-  tool                Tools      @relation(fields: [toolId], references: [id], onDelete: Cascade)  // un BorrowCartItem concerne un outil unique
+  itemStatus          LoanItemStatus @default(LOANNED)
+  LoanDate          DateTime         @default(now())
+  returnDate          DateTime? // permet de gérer le cas ou parmi un emprunt de 3 outils 2 sont retournés, cela évite de casser le prêt  
+  cart                Loan     @relation(fields: [cartId], references: [id], onDelete: Cascade) // un LoanCartItem appartient à un panier unique  
+  tool                Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)  // un LoanCartItem concerne un outil unique
 }
 
-model BorrowHistory {
-  id                  String   @id @default(cuid())
-  toolId              String
-  borrowerId          String
-  borrowingDate       DateTime
-  returnDate          DateTime?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
 
-  tool                Tools    @relation(fields: [toolId], references: [id], onDelete: Cascade) 
-  borrower            Borrower    @relation(fields: [borrowerId], references: [id], onDelete: Cascade)
-}
 
 // --------------------------------------------------------------------------------------------------------------------------------//
 
@@ -147,14 +158,21 @@ enum Role {
 
 enum ToolStatus {
   AVAILABLE // disponible
-  BORROWED  // emprunté
+  LOANNED  // emprunté
   BROKEN    // cassé
   LOST      // perdu
 }
 
-enum BorrowStatus {
-  IN_PROGRESS // En cours 
-  COMPLETED  // Terminé 
+enum LoanStatus {
+  IN_PROGRESS // En cours
+  RETURNED    // Retourné
+  CANCELLED   // Annulé
+}
+
+enum LoanItemStatus {
+  LOANNED // Emprunté
+  RETURNED // Retourné
+  LOST     // Perdu
 }
 
 enum ProjectStatus {

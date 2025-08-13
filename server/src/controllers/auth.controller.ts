@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import { loginService, logoutService, refreshService, registerService } from '../services';
+import { authService } from '../services';
 import { loginSchema, registerSchema } from '../schemas';
 import { generateCookie } from '../helpers';
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const parsedData = registerSchema.parse(req.body); // je vais délégué la vérification à un middlewares de validation d'erreur Zod qui va prendre le schema en parametre
-        const response = await registerService(parsedData);
+        const response = await authService.register(parsedData);
         res.status(201).json(response);
     } catch (error) {
         next(error);
@@ -18,7 +18,7 @@ export const loginController = async (req: Request, res: Response, next: NextFun
         // on parse l'entrée utilisateur avec zod
         const parsedData = loginSchema.parse(req.body); // je vais délégué la vérification à un middlewares de validation d'erreur Zod qui va prendre le schema en parametre
 
-        const response = await loginService(parsedData);
+        const response = await authService.login(parsedData);
         const refreshToken = response.data?.refreshToken;
 
         // on stock le refreshToken dans un cookie
@@ -35,7 +35,7 @@ export const refreshController = async (req: Request, res: Response, next: NextF
     const refreshToken = req.cookies.refresh_token;
 
     try {
-        const response = await refreshService(userId, refreshToken);
+        const response = await authService.refresh(userId, refreshToken);
 
         const newAccessToken = response.data?.accessToken as string;
         const newRefreshToken = response.data?.refreshToken as string;
@@ -59,10 +59,10 @@ export const refreshController = async (req: Request, res: Response, next: NextF
 export const logoutController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = (req as any).user.id;
-        await logoutService(userId);
+        const logoutResponse = await authService.logout(userId);
         res.clearCookie('refresh_token');
 
-        res.status(201).json({ message: 'Deconnexion réussi' });
+        res.status(201).json(logoutResponse);
     } catch (error) {
         next(error);
     }

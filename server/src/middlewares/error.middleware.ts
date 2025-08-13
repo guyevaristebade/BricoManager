@@ -6,10 +6,11 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     const status = err.status || 500;
     const message = err.message || 'Erreur server';
     const apiResponse: ApiResponse = {
-        ok: false,
+        success: false,
         data: null,
         status,
-        error: message,
+        message: message,
+        timestamp: Date.now().toLocaleString(),
     };
     res.status(status).json(apiResponse);
 };

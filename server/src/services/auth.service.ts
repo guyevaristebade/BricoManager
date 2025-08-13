@@ -1,4 +1,4 @@
-import { prisma } from '@config/index';
+import { prisma } from '../config';
 import { ConflitError, UnauthorizedError } from '../errors';
 import { loginInput, RegisterInput } from '../schemas';
 import { ApiResponse, userWithoutRole, UserPayloadWithTokens, ITokens, UserPayload } from '../types';
@@ -11,127 +11,150 @@ import {
     updateLoginAt,
 } from '../helpers';
 
-export const registerService = async (data: RegisterInput) => {
-    const apiResponse: ApiResponse<userWithoutRole> = {
-        ok: true,
-        status: 201,
-        data: null,
-    };
+export const authService = {
+    register: async (data: RegisterInput) => {
+        const apiResponse: ApiResponse<userWithoutRole> = {
+            success: true,
+            status: 201,
+            data: null,
+            timestamp: Date.now().toLocaleString(),
+        };
 
-    const { email, name, password } = data;
-    // existing user
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+        const { email, name, password } = data;
+        // existing user
+        const existingUser = await prisma.user.findUnique({ where: { email } });
 
-    if (existingUser) throw new ConflitError('Un utilisateur existe déjà !');
+        if (existingUser) throw new ConflitError('Un utilisateur existe déjà !');
 
-    //hash password
-    const passwordHash = await hashPassword(password);
+        //hash password
+        const passwordHash = await hashPassword(password);
 
-    const user = await prisma.user.create({
-        data: {
-            name,
-            email,
-            password: passwordHash,
-        },
-    });
+        const user = await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: passwordHash,
+            },
+        });
 
-    apiResponse.data = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-    };
+        await prisma.userProfile.create({
+            data: {
+                userId: user.id,
+            },
+        });
 
-    return apiResponse;
-};
+        apiResponse.data = {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+        };
 
-export const loginService = async (data: loginInput) => {
-    const apiResponse: ApiResponse<UserPayloadWithTokens> = {
-        ok: true,
-        status: 201,
-        data: null,
-    };
-    const { email, password } = data;
+        return apiResponse;
+    },
 
-    // est-ce qu'un utilisateur existe ?
-    const existingUser = await prisma.user.findUnique({
-        where: { email },
-    });
+    login: async (data: loginInput) => {
+        const apiResponse: ApiResponse<UserPayloadWithTokens> = {
+            success: true,
+            status: 200,
+            data: null,
+            timestamp: Date.now().toLocaleString(),
+        };
+        const { email, password } = data;
 
-    if (!existingUser) throw new UnauthorizedError('Email ou mot de passe incorrect');
+        // est-ce qu'un utilisateur existe ?
+        const existingUser = await prisma.user.findUnique({
+            where: { email },
+        });
 
-    // comparons les mdp
-    const isPasswordValid = await comparePassword(password, existingUser.password);
+        if (!existingUser) throw new UnauthorizedError('Email ou mot de passe incorrect');
 
-    if (!isPasswordValid) throw new UnauthorizedError('Email ou mot de passe incorrect');
+        // comparons les mdp
+        const isPasswordValid = await comparePassword(password, existingUser.password);
 
-    // extraction de certaines informations sur l'utilisateur
-    const userPayload: UserPayload = {
-        id: existingUser.id,
-        email: existingUser.email,
-        name: existingUser.name,
-        role: existingUser.role,
-    };
+        if (!isPasswordValid) throw new UnauthorizedError('Email ou mot de passe incorrect');
 
-    // génération des tokens
-    const accessToken = generateAccessToken(userPayload);
-    const refreshToken = generateRefreshToken(userPayload);
+        // extraction de certaines informations sur l'utilisateur
+        const userPayload: UserPayload = {
+            id: existingUser.id,
+            email: existingUser.email,
+            name: existingUser.name,
+            role: existingUser.role,
+        };
 
-    // mise à jour de la date de login
-    await updateLoginAt(existingUser.id);
+        // génération des tokens
+        const accessToken = generateAccessToken(userPayload);
+        const refreshToken = generateRefreshToken(userPayload);
 
-    // stockage du refreshToken en base
-    await storeRefreshToken(existingUser.id, refreshToken);
+        // mise à jour de la date de login
+        await updateLoginAt(existingUser.id);
 
-    apiResponse.data = {
-        user: userPayload,
-        accessToken,
-        refreshToken,
-    };
+        // stockage du refreshToken en base
+        await storeRefreshToken(existingUser.id, refreshToken);
 
-    return apiResponse;
-};
+        apiResponse.data = {
+            user: userPayload,
+            accessToken,
+            refreshToken,
+        };
 
-export const refreshService = async (userId: string, refreshToken: string) => {
-    const apiResponse: ApiResponse<ITokens> = {
-        ok: true,
-        status: 201,
-        data: null,
-    };
+        return apiResponse;
+    },
 
-    if (!userId) throw new UnauthorizedError('Utilisateur invalide');
+    refresh: async (userId: string, refreshToken: string) => {
+        const apiResponse: ApiResponse<ITokens> = {
+            success: true,
+            status: 201,
+            data: null,
+            timestamp: Date.now().toLocaleString(),
+        };
 
-    // on vérifie que le user existe et que la valeur de refreshToken en base n'est pas null
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-    });
-    if (!user || !user.refreshToken) throw new UnauthorizedError('Accès refusé');
+        if (!userId) throw new UnauthorizedError('Utilisateur invalide');
 
-    // on vérifie que le token en base et celui du cookie sont identique
-    const compareTokens = await comparePassword(refreshToken, user.refreshToken);
-    if (!compareTokens) throw new UnauthorizedError('Token invalide');
+        // on vérifie que le user existe et que la valeur de refreshToken en base n'est pas null
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+        });
+        if (!user || !user.refreshToken) throw new UnauthorizedError('Accès refusé');
 
-    const userPayload: UserPayload = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-    };
-    // on génère un newAccessToken et newRefreshToken
-    const newAccessToken = generateAccessToken(userPayload);
-    const newRefreshToken = generateRefreshToken(userPayload);
+        // on vérifie que le token en base et celui du cookie sont identique
+        const compareTokens = await comparePassword(refreshToken, user.refreshToken);
+        if (!compareTokens) throw new UnauthorizedError('Token invalide');
 
-    // on stock le nouveau refreshToken en base pour la rotation
-    await storeRefreshToken(userId, newRefreshToken);
-    apiResponse.data = { accessToken: newAccessToken, refreshToken: newRefreshToken };
+        const userPayload: UserPayload = {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+        };
+        // on génère un newAccessToken et newRefreshToken
+        const newAccessToken = generateAccessToken(userPayload);
+        const newRefreshToken = generateRefreshToken(userPayload);
 
-    return apiResponse;
-};
+        // on stock le nouveau refreshToken en base pour la rotation
+        await storeRefreshToken(userId, newRefreshToken);
+        apiResponse.data = { accessToken: newAccessToken, refreshToken: newRefreshToken };
 
-export const logoutService = async (userId: string) => {
-    if (!userId) throw new UnauthorizedError('Utilisateur invalide');
+        return apiResponse;
+    },
 
-    const user = await prisma.user.update({
-        where: { id: userId },
-        data: { refreshToken: null },
-    });
+    logout: async (userId: string) => {
+        const apiResponse: ApiResponse<ITokens> = {
+            success: true,
+            status: 200,
+            data: null,
+            message: 'Déconnexion reussi !',
+            timestamp: Date.now().toLocaleString(),
+        };
+
+        if (!userId) throw new UnauthorizedError('Utilisateur invalide');
+
+        const user = await prisma.user.update({
+            where: { id: userId },
+            data: { refreshToken: null },
+        });
+
+        if (!user) throw new UnauthorizedError('Utilisateur non trouvé ou déjà déconnecté');
+
+        return apiResponse;
+    },
 };

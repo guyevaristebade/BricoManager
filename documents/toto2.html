@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BTR Bâtiment - Votre Expert en Construction</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, #0e1512 0%, #213610 100%);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+      }
+
+      .logo {
+        height: 50px;
+        width: auto;
+      }
+
+      .nav-menu {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-menu li a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .nav-menu li a:hover {
+        color: #90ee90;
+      }
+
+      .nav-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* Hero Section */
+      .hero {
+        background: linear-gradient(
+            rgba(45, 80, 22, 0.8),
+            rgba(45, 80, 22, 0.8)
+          ),
+          url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600"><rect fill="%23f0f0f0" width="1000" height="600"/><rect fill="%234a7c23" x="0" y="0" width="1000" height="200" opacity="0.3"/><rect fill="%232d5016" x="0" y="400" width="1000" height="200" opacity="0.2"/></svg>');
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        background-size: cover;
+        background-position: center;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        padding: 2rem;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .hero p {
+        font-size: 1.3rem;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: bold;
+      }
+
+      .btn-primary {
+        background: #4a7c23;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #2d5016;
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .btn-secondary:hover {
+        background: white;
+        color: #2d5016;
+      }
+
+      /* Sections */
+      section {
+        padding: 5rem 2rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 3rem;
+        color: #2d5016;
+      }
+
+      /* Services */
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .service-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .service-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .service-icon {
+        width: 60px;
+        height: 60px;
+        background: #4a7c23;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      /* About */
+      .about {
+        background: #f8f9fa;
+      }
+
+      .about-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+      }
+
+      .about-text {
+        font-size: 1.1rem;
+        line-height: 1.8;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .stat-item {
+        text-align: center;
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #4a7c23;
+      }
+
+      /* Réalisations */
+      .realisations {
+        padding: 5rem 2rem;
+        background: #f8f9fa;
+      }
+
+      .filter-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 10px 20px;
+        border: 2px solid #4a7c23;
+        background: white;
+        color: #4a7c23;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: #4a7c23;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .project-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .project-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .project-image {
+        position: relative;
+        height: 250px;
+        overflow: hidden;
+      }
+
+      .project-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, #4a7c23, #2d5016);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+      }
+
+      .project-card:hover .project-placeholder {
+        transform: scale(1.1);
+      }
+
+      .placeholder-content {
+        font-size: 4rem;
+        color: white;
+        opacity: 0.8;
+      }
+
+      .project-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 2rem;
+        color: white;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .project-card:hover .project-overlay {
+        opacity: 1;
+      }
+
+      .project-overlay h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .view-project {
+        margin-top: 1rem;
+        padding: 8px 16px;
+        background: #4a7c23;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .view-project:hover {
+        background: #2d5016;
+      }
+
+      .project-info {
+        padding: 1.5rem;
+      }
+
+      .project-info h4 {
+        color: #2d5016;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+      }
+
+      .project-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .project-type {
+        background: #4a7c23;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+      }
+
+      .project-date {
+        background: #e0e0e0;
+        color: #666;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+      }
+
+      .project-info p {
+        color: #666;
+        line-height: 1.6;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 800px;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1;
+      }
+
+      .close:hover {
+        color: #000;
+      }
+
+      .modal-header {
+        padding: 2rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .modal-body {
+        padding: 2rem;
+      }
+
+      .modal-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 1rem 0;
+      }
+
+      .modal-image {
+        height: 150px;
+        background: linear-gradient(45deg, #4a7c23, #90ee90);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+      }
+
+      .project-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .detail-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+
+      .detail-label {
+        font-weight: bold;
+        color: #2d5016;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Contact */
+      .contact {
+        background: #2d5016;
+        color: white;
+      }
+
+      .contact-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+      }
+
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .contact-icon {
+        width: 40px;
+        height: 40px;
+        background: #4a7c23;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .contact-form {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      .form-group textarea {
+        height: 100px;
+        resize: vertical;
+      }
+
+      /* Map */
+      .map-container {
+        height: 400px;
+        background: #e0e0e0;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2rem;
+      }
+
+      /* Footer */
+      .footer {
+        background: #1a1a1a;
+        color: white;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .nav-menu {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          width: 100%;
+          background: #2d5016;
+          flex-direction: column;
+          padding: 1rem;
+        }
+
+        .nav-menu.active {
+          display: flex;
+        }
+
+        .nav-toggle {
+          display: block;
+        }
+
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .about-content,
+        .contact-content {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <nav class="nav-container">
+        <div class="logo-container">
+          <svg
+            class="logo"
+            viewBox="0 0 200 80"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <!-- Logo BTR recréé -->
+            <defs>
+              <linearGradient
+                id="greenGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" style="stop-color: #4a7c23" />
+                <stop offset="100%" style="stop-color: #90ee90" />
+              </linearGradient>
+            </defs>
+            <!-- Lettre B -->
+            <path
+              d="M10 15 L10 55 L25 55 C30 55 35 52 35 47 C35 44 33 41 30 40 C33 39 35 36 35 32 C35 27 30 25 25 25 L10 25 M15 20 L25 20 C28 20 30 22 30 25 C30 28 28 30 25 30 L15 30 M15 35 L26 35 C29 35 31 37 31 40 C31 43 29 45 26 45 L15 45"
+              fill="url(#greenGradient)"
+              stroke="#2d5016"
+              stroke-width="1"
+            />
+            <!-- Lettre T -->
+            <path
+              d="M45 15 L70 15 L70 20 L60 20 L60 55 L55 55 L55 20 L45 20 Z"
+              fill="url(#greenGradient)"
+              stroke="#2d5016"
+              stroke-width="1"
+            />
+            <!-- Lettre R -->
+            <path
+              d="M80 15 L80 55 L85 55 L85 40 L95 40 L102 55 L108 55 L100 40 C105 38 108 34 108 28 C108 21 103 15 95 15 L80 15 M85 20 L95 20 C100 20 103 23 103 28 C103 33 100 35 95 35 L85 35 Z"
+              fill="url(#greenGradient)"
+              stroke="#2d5016"
+              stroke-width="1"
+            />
+            <!-- Texte BTR -->
+            <text
+              x="120"
+              y="25"
+              font-family="Arial, sans-serif"
+              font-size="14"
+              font-weight="bold"
+              fill="#2d5016"
+            >
+              BTR
+            </text>
+            <text
+              x="120"
+              y="45"
+              font-family="Arial, sans-serif"
+              font-size="12"
+              fill="#4a7c23"
+            >
+              BÂTIMENT
+            </text>
+          </svg>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="#accueil">Accueil</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#realisations">Réalisations</a></li>
+          <li><a href="#apropos">À Propos</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="nav-toggle">☰</button>
+      </nav>
+    </header>
+
+    ```
+    <!-- Hero Section -->
+    <section id="accueil" class="hero">
+      <div class="hero-content">
+        <h1>BTR Bâtiment</h1>
+        <p>
+          Votre partenaire de confiance pour tous vos projets de construction et
+          rénovation
+        </p>
+        <div class="cta-buttons">
+          <a href="#contact" class="btn btn-primary">Demander un Devis</a>
+          <a href="#services" class="btn btn-secondary">Nos Services</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="services">
+      <div class="container">
+        <h2 class="section-title">Nos Services</h2>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-icon">🏗️</div>
+            <h3>Construction Neuve</h3>
+            <p>
+              Construction de maisons individuelles, bâtiments industriels et
+              commerciaux selon vos besoins et normes en vigueur.
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🔨</div>
+            <h3>Rénovation</h3>
+            <p>
+              Rénovation complète ou partielle de vos espaces intérieurs et
+              extérieurs avec des matériaux de qualité.
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🏠</div>
+            <h3>Extension</h3>
+            <p>
+              Agrandissement de votre habitat existant pour créer de nouveaux
+              espaces de vie adaptés à vos besoins.
+            </p>
+          </div>
+          <!-- <div class="service-card">
+            <div class="service-icon">🧱</div>
+            <h3>Maçonnerie</h3>
+            <p>
+              Travaux de maçonnerie générale, fondations, murs porteurs et
+              cloisons avec expertise technique.
+            </p>
+          </div> -->
+          <div class="service-card">
+            <div class="service-icon">🏢</div>
+            <h3>Bâtiment Industriel</h3>
+            <p>
+              Construction d'entrepôts, ateliers et bâtiments industriels aux
+              normes les plus strictes.
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">⚡</div>
+            <h3>Dépannage Urgent</h3>
+            <p>
+              Service de dépannage d'urgence 7j/7 pour tous vos problèmes de
+              bâtiment nécessitant une intervention rapide.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Réalisations -->
+    <section id="realisations" class="realisations">
+      <div class="container">
+        <h2 class="section-title">Nos Réalisations</h2>
+
+        <!-- Filtres -->
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">Tous</button>
+          <button class="filter-btn" data-filter="construction">
+            Construction Neuve
+          </button>
+          <button class="filter-btn" data-filter="renovation">
+            Rénovation
+          </button>
+          <button class="filter-btn" data-filter="extension">Extension</button>
+          <button class="filter-btn" data-filter="industriel">
+            Industriel
+          </button>
+        </div>
+
+        <!-- Galerie de projets -->
+        <div class="projects-grid">
+          <!-- Projet 1 - Construction -->
+          <div class="project-card" data-category="construction">
+            <div class="project-image">
+              <div class="project-placeholder">
+                <div class="placeholder-content">🏠</div>
+              </div>
+              <div class="project-overlay">
+                <h3>Villa Contemporaine</h3>
+                <p>Construction • 2024</p>
+                <button class="view-project" onclick="openModal('project1')">
+                  Voir Détails
+                </button>
+              </div>
+            </div>
+            <div class="project-info">
+              <h4>Villa Contemporaine - Neuilly</h4>
+              <div class="project-meta">
+                <span class="project-type">Construction</span>
+                <span class="project-date">2024</span>
+              </div>
+              <p>
+                Construction d'une villa moderne de 250m² avec piscine et jardin
+                paysager.
+              </p>
+            </div>
+          </div>
+
+          <!-- Projet 2 - Rénovation -->
+          <div class="project-card" data-category="renovation">
+            <div class="project-image">
+              <div
+                class="project-placeholder"
+                style="background: linear-gradient(45deg, #4a7c23, #90ee90)"
+              >
+                <div class="placeholder-content">🏛️</div>
+              </div>
+              <div class="project-overlay">
+                <h3>Rénovation Haussmannien</h3>
+                <p>Rénovation • 2023</p>
+                <button class="view-project" onclick="openModal('project2')">
+                  Voir Détails
+                </button>
+              </div>
+            </div>
+            <div class="project-info">
+              <h4>Appartement Haussmannien - Paris 16e</h4>
+              <div class="project-meta">
+                <span class="project-type">Rénovation</span>
+                <span class="project-date">2023</span>
+              </div>
+              <p>
+                Rénovation complète d'un appartement de 180m² avec conservation
+                du cachet d'origine.
+              </p>
+            </div>
+          </div>
+
+          <!-- Projet 3 - Extension -->
+          <div class="project-card" data-category="extension">
+            <div class="project-image">
+              <div
+                class="project-placeholder"
+                style="background: linear-gradient(45deg, #2d5016, #4a7c23)"
+              >
+                <div class="placeholder-content">🏘️</div>
+              </div>
+              <div class="project-overlay">
+                <h3>Extension Moderne</h3>
+                <p>Extension • 2024</p>
+                <button class="view-project" onclick="openModal('project3')">
+                  Voir Détails
+                </button>
+              </div>
+            </div>
+            <div class="project-info">
+              <h4>Extension Maison Familiale - Versailles</h4>
+              <div class="project-meta">
+                <span class="project-type">Extension</span>
+                <span class="project-date">2024</span>
+              </div>
+              <p>
+                Agrandissement de 60m² avec ouverture sur jardin et verrière.
+              </p>
+            </div>
+          </div>
+
+          <!-- Projet 4 - Industriel -->
+          <div class="project-card" data-category="industriel">
+            <div class="project-image">
+              <div
+                class="project-placeholder"
+                style="background: linear-gradient(45deg, #666, #999)"
+              >
+                <div class="placeholder-content">🏭</div>
+              </div>
+              <div class="project-overlay">
+                <h3>Entrepôt Logistique</h3>
+                <p>Industriel • 2023</p>
+                <button class="view-project" onclick="openModal('project4')">
+                  Voir Détails
+                </button>
+              </div>
+            </div>
+            <div class="project-info">
+              <h4>Entrepôt Logistique - Roissy</h4>
+              <div class="project-meta">
+                <span class="project-type">Industriel</span>
+                <span class="project-date">2023</span>
+              </div>
+              <p>Construction d'un entrepôt de 5000m² avec bureaux intégrés.</p>
+            </div>
+          </div>
+
+          <!-- Projet 5 - Construction -->
+          <div class="project-card" data-category="construction">
+            <div class="project-image">
+              <div
+                class="project-placeholder"
+                style="background: linear-gradient(45deg, #8b4513, #daa520)"
+              >
+                <div class="placeholder-content">🏗️</div>
+              </div>
+              <div class="project-overlay">
+                <h3>Résidence Étudiante</h3>
+                <p>Construction • 2023</p>
+                <button class="view-project" onclick="openModal('project5')">
+                  Voir Détails
+                </button>
+              </div>
+            </div>
+            <div class="project-info">
+              <h4>Résidence Étudiante - Créteil</h4>
+              <div class="project-meta">
+                <span class="project-type">Construction</span>
+                <span class="project-date">2023</span>
+              </div>
+              <p>Bâtiment de 120 logements étudiants avec espaces communs.</p>
+            </div>
+          </div>
+
+          <!-- Projet 6 - Rénovation -->
+          <div class="project-card" data-category="renovation">
+            <div class="project-image">
+              <div
+                class="project-placeholder"
+                style="background: linear-gradient(45deg, #cd853f, #f4a460)"
+              >
+                <div class="placeholder-content">🏚️</div>
+              </div>
+              <div class="project-overlay">
+                <h3>Loft Industriel</h3>
+                <p>Rénovation • 2024</p>
+                <button class="view-project" onclick="openModal('project6')">
+                  Voir Détails
+                </button>
+              </div>
+            </div>
+            <div class="project-info">
+              <h4>Loft Industriel - Montreuil</h4>
+              <div class="project-meta">
+                <span class="project-type">Rénovation</span>
+                <span class="project-date">2024</span>
+              </div>
+              <p>Transformation d'un ancien atelier en loft de 300m².</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal pour détails projet -->
+    <div id="projectModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div id="modalContent">
+          <!-- Contenu dynamique injecté par JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <section id="apropos" class="about">
+      <div class="container">
+        <h2 class="section-title">À Propos de BTR Bâtiment</h2>
+        <div class="about-content">
+          <div class="about-text">
+            <h3>Une expertise reconnue depuis plus de 15 ans</h3>
+            <p>
+              BTR Bâtiment est une entreprise spécialisée dans le secteur du BTP
+              qui accompagne particuliers et professionnels dans la réalisation
+              de leurs projets de construction et rénovation.
+            </p>
+            <p>
+              Notre équipe de professionnels qualifiés met son savoir-faire au
+              service de votre projet, en respectant les délais, votre budget et
+              les normes de qualité les plus exigeantes.
+            </p>
+            <p>
+              Nous privilégions une approche personnalisée et un suivi rigoureux
+              de chaque chantier pour garantir votre satisfaction.
+            </p>
+          </div>
+          <div class="about-image">
+            <div
+              style="
+                height: 300px;
+                background: linear-gradient(45deg, #4a7c23, #90ee90);
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.2rem;
+              "
+            >
+              Équipe BTR Bâtiment au travail
+            </div>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <p>Projets Réalisés</p>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">15</div>
+            <p>Années d'Expérience</p>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <p>Clients Satisfaits</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="contact">
+      <div class="container">
+        <h2 class="section-title" style="color: white">Contactez-Nous</h2>
+        <div class="contact-content">
+          <div class="contact-info">
+            <h3>Informations de Contact</h3>
+            <div class="contact-item">
+              <div class="contact-icon">📍</div>
+              <div>
+                <h4>Adresse</h4>
+                <p>123 Avenue de la Construction<br />75000 Paris, France</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📞</div>
+              <div>
+                <h4>Téléphone</h4>
+                <p>01 23 45 67 89</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">✉️</div>
+              <div>
+                <h4>Email</h4>
+                <p>contact@btr-batiment.fr</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">🕒</div>
+              <div>
+                <h4>Horaires</h4>
+                <p>Lun-Ven: 8h00-18h00<br />Sam: 8h00-12h00</p>
+              </div>
+            </div>
+          </div>
+          <div class="contact-form">
+            <h3>Demande de Devis</h3>
+            <form>
+              <div class="form-group">
+                <label for="nom">Nom *</label>
+                <input type="text" id="nom" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" required />
+              </div>
+              <div class="form-group">
+                <label for="telephone">Téléphone</label>
+                <input type="tel" id="telephone" />
+              </div>
+              <div class="form-group">
+                <label for="projet">Type de Projet</label>
+                <select
+                  id="projet"
+                  style="
+                    width: 100%;
+                    padding: 12px;
+                    border: none;
+                    border-radius: 5px;
+                  "
+                >
+                  <option>Construction neuve</option>
+                  <option>Rénovation</option>
+                  <option>Extension</option>
+                  <!-- <option>Maçonnerie</option> -->
+                  <option>Autre</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="message">Message *</label>
+                <textarea
+                  id="message"
+                  placeholder="Décrivez votre projet..."
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%">
+                Envoyer la Demande
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Map -->
+        <div class="map-container">
+          <div style="text-align: center; color: #666">
+            <h4>Notre Localisation</h4>
+            <p>123 Avenue de la Construction, 75000 Paris</p>
+            <p>
+              <em>Carte interactive disponible sur le site en production</em>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p>
+          &copy; 2025 BTR Bâtiment. Tous droits réservés. | Mentions légales |
+          Politique de confidentialité | Contactez-Nous
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Navigation mobile
+      const navToggle = document.querySelector(".nav-toggle");
+      const navMenu = document.querySelector(".nav-menu");
+
+      navToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
+      });
+
+      // Smooth scrolling
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+
+      // Form submission
+      document.querySelector("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        alert(
+          "Merci pour votre demande ! Nous vous recontacterons rapidement."
+        );
+      });
+
+      // Header scroll effect
+      window.addEventListener("scroll", () => {
+        const header = document.querySelector(".header");
+        if (window.scrollY > 100) {
+          header.style.background = "rgba(45, 80, 22, 0.95)";
+        } else {
+          header.style.background =
+            "linear-gradient(135deg, #2d5016 0%, #4a7c23 100%)";
+        }
+      });
+    </script>
+  </body>
+</html>

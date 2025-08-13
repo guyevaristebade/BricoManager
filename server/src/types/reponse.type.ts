@@ -4,12 +4,21 @@
  * Utilise cette interface pour uniformiser les réponses de ton API et faciliter le traitement côté client.
  */
 interface ResponseType<T> {
-    ok: boolean;
+    success: boolean;
     status: number;
     data: T | null;
     message?: string;
-    error?: string;
+    meta?: Record<string, any>;
+    timestamp: string;
 }
 
 // alias de type pour une réponse générique
 export type ApiResponse<T = any> = ResponseType<T>;
+
+// success: boolean; // plus universel que "ok"
+// status: number;   // code HTTP
+// message?: string; // message lisible par un humain
+// code?: string;    // code d'erreur ou de succès lisible par machine
+// data?: T;         // données retournées
+// meta?: Record<string, any>; // pagination, filtres appliqués, etc.
+// timestamp: string; // horodatage ISO

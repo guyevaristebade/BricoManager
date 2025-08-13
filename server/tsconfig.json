@@ -11,18 +11,18 @@
         "resolveJsonModule": true,
         "sourceMap": true,
         "moduleResolution": "node",
-        "baseUrl": "./src",
-        "paths": {
-            "@config/*": ["config/*"],
-            "@middlewares/*": ["middlewares/*"],
-            "@controllers/*": ["controllers/*"],
-            "@routes/*": ["routes/*"],
-            "@errors/*": ["errors/*"],
-            "@schemas/*": ["schemas/*"],
-            "@services/*": ["services/*"],
-            "@helpers/*": ["helpers/*"],
-            "@types/*": ["types/*"]
-        }
+        "baseUrl": "./src"
+        // "paths": {
+        //     "@config/*": ["config/*"],
+        //     "@middlewares/*": ["middlewares/*"],
+        //     "@controllers/*": ["controllers/*"],
+        //     "@routes/*": ["routes/*"],
+        //     "@errors/*": ["errors/*"],
+        //     "@schemas/*": ["schemas/*"],
+        //     "@services/*": ["services/*"],
+        //     "@helpers/*": ["helpers/*"],
+        //     "@types/*": ["types/*"]
+        // }
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules"]
