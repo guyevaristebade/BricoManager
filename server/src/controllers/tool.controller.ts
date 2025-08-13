@@ -1,4 +1,4 @@
-import { toolSchema } from 'schemas';
+import { createToolSchema } from 'schemas';
 import { toolService } from '../services';
 import { NextFunction, Request, Response } from 'express';
 

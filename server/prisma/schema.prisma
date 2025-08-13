@@ -140,7 +140,7 @@ model LoanCartItem{
   id                  String    @id @default(cuid())
   toolId              String
   cartId              String
-  itemStatus          LoanItemStatus @default(LOANNED)
+  itemStatus          LoanItemStatus @default(LOANED)
   LoanDate          DateTime         @default(now())
   returnDate          DateTime? // permet de gérer le cas ou parmi un emprunt de 3 outils 2 sont retournés, cela évite de casser le prêt  
   cart                Loan     @relation(fields: [cartId], references: [id], onDelete: Cascade) // un LoanCartItem appartient à un panier unique  
@@ -158,7 +158,7 @@ enum Role {
 
 enum ToolStatus {
   AVAILABLE // disponible
-  LOANNED  // emprunté
+  LOANED  // emprunté
   BROKEN    // cassé
   LOST      // perdu
 }
@@ -170,7 +170,7 @@ enum LoanStatus {
 }
 
 enum LoanItemStatus {
-  LOANNED // Emprunté
+  LOANED // Emprunté
   RETURNED // Retourné
   LOST     // Perdu
 }

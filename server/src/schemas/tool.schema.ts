@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export const toolSchema = z.object({
+export const createToolSchema = z.object({
     toolName: z.string(),
     toolCategoryId: z.string(), //uuid() is depreciate
     toolStatus: z.enum(['AVAILABLE', 'LOANED', 'BROKEN', 'LOST']).default('AVAILABLE'),
@@ -10,4 +10,4 @@ export const toolSchema = z.object({
     toolDescription: z.string().min(10).max(500),
 });
 
-export type toolInput = z.infer<typeof toolSchema>;
+export type createToolInput = z.infer<typeof createToolSchema>;
