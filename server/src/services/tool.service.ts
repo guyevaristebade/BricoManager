@@ -13,7 +13,7 @@ export const toolService = {
             timestamp: new Date().toISOString(),
         };
 
-        const uploadResult = await cloudinaryService.upload(file);
+        const uploadResult = await cloudinaryService.upload(file, 'tools');
 
         const tool = await prisma.tool.create({
             data: {
@@ -125,7 +125,7 @@ export const toolService = {
         // upload new image to cloudinary
         if (file) {
             // upload withnew image
-            const uploadResult = await cloudinaryService.upload(file);
+            const uploadResult = await cloudinaryService.upload(file, 'tools');
             tool = await prisma.tool.update({
                 where: { id },
                 data: {

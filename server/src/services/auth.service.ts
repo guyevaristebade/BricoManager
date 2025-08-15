@@ -17,7 +17,7 @@ export const authService = {
             success: true,
             status: 201,
             data: null,
-            timestamp: Date.now().toLocaleString(),
+            timestamp: new Date().toISOString(),
         };
 
         const { email, name, password } = data;
@@ -57,7 +57,7 @@ export const authService = {
             success: true,
             status: 200,
             data: null,
-            timestamp: Date.now().toLocaleString(),
+            timestamp: new Date().toISOString(),
         };
         const { email, password } = data;
 
@@ -105,7 +105,7 @@ export const authService = {
             success: true,
             status: 201,
             data: null,
-            timestamp: Date.now().toLocaleString(),
+            timestamp: new Date().toISOString(),
         };
 
         if (!userId) throw new UnauthorizedError('Utilisateur invalide');
@@ -143,7 +143,7 @@ export const authService = {
             status: 200,
             data: null,
             message: 'Déconnexion reussi !',
-            timestamp: Date.now().toLocaleString(),
+            timestamp: new Date().toISOString(),
         };
 
         if (!userId) throw new UnauthorizedError('Utilisateur invalide');

@@ -2,12 +2,12 @@ import { UploadApiResponse } from 'cloudinary';
 import cloudinary from '../config/cloudinary.config';
 
 export const cloudinaryService = {
-    upload: async (file: Express.Multer.File): Promise<UploadApiResponse> => {
+    upload: async (file: Express.Multer.File, storageFileName: string): Promise<UploadApiResponse> => {
         const options = {
             use_filename: true,
             unique_filename: false,
             overwrite: true,
-            folder: 'BricoManager',
+            folder: `BricoManager/${storageFileName}`,
             quality: 'auto', // compression automatique
             fetch_format: 'auto', // convertit au format optimal selon le navigateur
             format: 'webp', // convertit l'image au format webp
