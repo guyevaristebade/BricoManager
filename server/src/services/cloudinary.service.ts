@@ -1,5 +1,6 @@
 import { UploadApiResponse } from 'cloudinary';
 import cloudinary from '../config/cloudinary.config';
+import { cleanupFile } from 'helpers';
 
 export const cloudinaryService = {
     upload: async (file: Express.Multer.File, storageFileName: string): Promise<UploadApiResponse> => {
@@ -16,8 +17,13 @@ export const cloudinaryService = {
         try {
             const result = await cloudinary.uploader.upload(file.path, options);
 
+            if (result) {
+                await cleanupFile(file.path);
+            }
+
             return result;
         } catch (error) {
+            console.error('Error uploading image to Cloudinary:', error);
             throw new Error('Error uploading image');
         }
     },
@@ -25,6 +31,7 @@ export const cloudinaryService = {
     delete: async (public_id: string): Promise<Boolean> => {
         try {
             await cloudinary.uploader.destroy(public_id);
+
             return true;
         } catch (error) {
             throw new Error('Error deleting image : ' + error);

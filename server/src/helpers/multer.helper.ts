@@ -1,3 +1,4 @@
+// TODO étudier la configuration de miulter
 import multer from 'multer';
 
 const storage = multer.diskStorage({
@@ -10,8 +11,9 @@ const storage = multer.diskStorage({
 });
 
 export const upload = multer({
-    storage: multer.memoryStorage(),
+    storage,
     fileFilter: (req, file, cb) => {
+        // Filtrer les types de fichiers acceptés
         if (file.mimetype.startsWith('image/')) {
             cb(null, true);
         } else {
@@ -22,18 +24,3 @@ export const upload = multer({
         fileSize: 5 * 1024 * 1024, // 5MB max
     },
 });
-
-// export const upload = multer({
-//     storage,
-//     fileFilter: (req, file, cb) => {
-//         // Filtrer les types de fichiers acceptés
-//         if (file.mimetype.startsWith('image/')) {
-//             cb(null, true);
-//         } else {
-//             cb(new Error('Only images are allowed'));
-//         }
-//     },
-//     limits: {
-//         fileSize: 5 * 1024 * 1024, // 5MB max
-//     },
-// });

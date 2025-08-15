@@ -141,6 +141,7 @@ export const locationService = {
         if (toolsInThisLocation.length > 0)
             throw new Error('Cannot delete location: tools are still associated with this location');
 
+        await cloudinaryService.delete(existingLocation.locationPublicId!);
         await prisma.location.delete({
             where: { id },
         });

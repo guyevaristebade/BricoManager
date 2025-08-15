@@ -31,7 +31,8 @@ export const loginController = async (req: Request, res: Response, next: NextFun
 };
 
 export const refreshController = async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).userId;
+    const userId = (req as any).user.id;
+    console.log(userId);
     const refreshToken = req.cookies.refresh_token;
 
     try {
