@@ -10,7 +10,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
         data: null,
         status,
         message: message,
-        timestamp: Date.now().toLocaleString(),
+        timestamp: new Date().toISOString(),
     };
     res.status(status).json(apiResponse);
 };

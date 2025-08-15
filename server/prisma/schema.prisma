@@ -35,6 +35,7 @@ model UserProfile{
   id        String   @id @default(cuid())
   userId    String   @unique
   avatarUrl String?
+  public_id String?
   darkMode  Boolean  @default(false)
 
   user   User @relation(fields: [userId], references: [id]) // un utilisateur à un profile unique 
@@ -58,9 +59,10 @@ model Project {
 
 // Représente une image de projet
 model ProjectImage {
-  id      String @id @default(cuid())
-  ProjectId  String
-  url     String
+  id          String @id @default(cuid())
+  ProjectId   String
+  url         String
+  public_id   String?
 
   project    Project  @relation(fields: [ProjectId], references: [id], onDelete: Cascade) // une image appartient à un projet 
 }
@@ -72,6 +74,8 @@ model Tool{
   toolCategoryId    String
   toolStatus        ToolStatus @default(AVAILABLE)
   toolDescription   String
+  toolImageUrl      String
+  toolPublicId      String
   nbLoaning         Int
   toolPrice         Float
   locationId        String
@@ -82,7 +86,6 @@ model Tool{
   location          Location @relation(fields: [locationId], references: [id]) // un outil appartient à un emplacement
 
   LoanCartItem    LoanCartItem[] // un tool peut apparaitre dans plusieurs LoanCartItem
-  images            ToolImage[] // un tools peut avoir plusieurs images
 }
 
 // représente l'emplacement d'un outil
@@ -94,13 +97,14 @@ model Location {
 }
 
 // représente l'image d'un outil
-model ToolImage {
-  id      String @id @default(cuid())
-  toolId  String
-  url     String
+// model ToolImage {
+//   id      String @id @default(cuid())
+//   toolId  String
+//   url     String
+//   public_id String?
 
-  tool    Tool  @relation(fields: [toolId], references: [id], onDelete: Cascade) // une image appartient à un tool
-}
+//   tool    Tool  @relation(fields: [toolId], references: [id], onDelete: Cascade) // une image appartient à un tool
+// }
 
 // représent la catégorie d'un outil
 model Category{

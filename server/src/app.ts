@@ -27,7 +27,7 @@ app.use(limiter);
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
-app.use('/api/v1/tool', toolRouter);
+app.use('/api/v1/tools', toolRouter);
 app.use('/api/v1/category', categoryRouter);
 
 app.use(errorHandler);
