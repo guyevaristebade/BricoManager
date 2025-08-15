@@ -94,6 +94,7 @@ model Location {
   id      String @id @default(cuid())
   locationName String
   locationImgUrl  String?
+  locationPublicId String?
   tools Tool[] // un emplacement peut contenir plusieurs outils
 }
 
