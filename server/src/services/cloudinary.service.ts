@@ -12,6 +12,9 @@ export const cloudinaryService = {
             quality: 'auto', // compression automatique
             fetch_format: 'auto', // convertit au format optimal selon le navigateur
             format: 'webp', // convertit l'image au format webp
+            width: 800,
+            height: 600,
+            crop: 'limit',
         };
 
         try {
@@ -34,6 +37,7 @@ export const cloudinaryService = {
 
             return true;
         } catch (error) {
+            console.log('Error deleting image from Cloudinary:', error);
             throw new Error('Error deleting image : ' + error);
         }
     },

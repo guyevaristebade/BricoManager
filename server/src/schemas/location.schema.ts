@@ -1,7 +1,7 @@
 import z from 'zod';
 
 export const locationSchema = z.object({
-    locationName: z.string().min(2).max(100),
+    locationName: z.string().optional(),
 });
 
 export type locationInput = z.infer<typeof locationSchema>;

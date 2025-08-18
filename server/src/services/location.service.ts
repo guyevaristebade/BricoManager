@@ -3,6 +3,7 @@ import { prisma } from '../config';
 import { ApiResponse } from '../types';
 import { NotFoundError } from 'errors/not-found.error';
 import { cloudinaryService } from './cloudinary.service';
+import { cleanupFile } from 'helpers';
 
 export const locationService = {
     create: async (locationData: locationInput, file?: Express.Multer.File) => {
@@ -23,11 +24,11 @@ export const locationService = {
                     ...locationData,
                     locationImgUrl: savedImage.secure_url,
                     locationPublicId: savedImage.public_id,
-                },
+                } as any, // as any car dans ma validation location.schema.ts une donnée est en optional
             });
         } else {
             location = await prisma.location.create({
-                data: locationData,
+                data: locationData as any,
             });
         }
 
@@ -93,22 +94,39 @@ export const locationService = {
 
         if (!existingLocation) throw new NotFoundError('Location not found');
 
-        await cloudinaryService.delete(existingLocation.locationPublicId!); // locationPublicId is present
-
         let location;
 
-        // save new image if exists
+        // Cas 1 & 2 : Nouvelle image fournie
         if (file) {
-            const savedImage = await cloudinaryService.upload(file, 'location');
-            location = await prisma.location.update({
-                where: { id },
-                data: {
-                    ...locationData,
-                    locationImgUrl: savedImage.secure_url,
-                    locationPublicId: savedImage.public_id,
-                },
-            });
+            try {
+                // Upload nouvelle image
+                const savedImage = await cloudinaryService.upload(file, 'location');
+
+                // Supprimer l'ancienne image SEULEMENT après succès du nouvel upload
+                if (existingLocation.locationPublicId) {
+                    await cloudinaryService.delete(existingLocation.locationPublicId);
+                }
+
+                // Mise à jour avec nouvelle image + données
+                location = await prisma.location.update({
+                    where: { id },
+                    data: {
+                        ...locationData,
+                        locationImgUrl: savedImage.secure_url,
+                        locationPublicId: savedImage.public_id,
+                    },
+                });
+                // Nettoyage du fichier temporaire
+                await cleanupFile(file.path);
+            } catch (error) {
+                // En cas d'erreur upload, on met à jour seulement les autres données
+                location = await prisma.location.update({
+                    where: { id },
+                    data: locationData,
+                });
+            }
         } else {
+            // Cas 3 : Pas de nouvelle image, mise à jour des données seulement
             location = await prisma.location.update({
                 where: { id },
                 data: locationData,
@@ -116,6 +134,9 @@ export const locationService = {
         }
 
         apiResponse.data = location;
+        apiResponse.success = true;
+        apiResponse.status = 200;
+        apiResponse.message = 'Location updated successfully';
 
         return apiResponse;
     },
@@ -141,10 +162,16 @@ export const locationService = {
         if (toolsInThisLocation.length > 0)
             throw new Error('Cannot delete location: tools are still associated with this location');
 
-        await cloudinaryService.delete(existingLocation.locationPublicId!);
-        await prisma.location.delete({
-            where: { id },
-        });
+        if (!existingLocation.locationPublicId && !existingLocation.locationPublicId) {
+            await prisma.location.delete({
+                where: { id },
+            });
+        } else {
+            await cloudinaryService.delete(existingLocation.locationPublicId!);
+            await prisma.location.delete({
+                where: { id },
+            });
+        }
 
         apiResponse.success = true;
         apiResponse.status = 200;
