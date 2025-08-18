@@ -11,6 +11,7 @@ export const createLocationController = async (req: Request, res: Response, next
 
         res.status(apiResponse.status).json(apiResponse);
     } catch (error) {
+        console.log(error);
         next(error);
     }
 };

@@ -14,8 +14,8 @@ import {
 export const authService = {
     register: async (data: RegisterInput) => {
         const apiResponse: ApiResponse<userWithoutRole> = {
-            success: true,
-            status: 201,
+            success: false,
+            status: 500,
             data: null,
             timestamp: new Date().toISOString(),
         };
@@ -48,14 +48,17 @@ export const authService = {
             email: user.email,
             name: user.name,
         };
+        apiResponse.success = true;
+        apiResponse.status = 201;
+        apiResponse.message = 'Register successfully!';
 
         return apiResponse;
     },
 
     login: async (data: loginInput) => {
         const apiResponse: ApiResponse<UserPayloadWithTokens> = {
-            success: true,
-            status: 200,
+            success: false,
+            status: 500,
             data: null,
             timestamp: new Date().toISOString(),
         };
@@ -96,14 +99,17 @@ export const authService = {
             accessToken,
             refreshToken,
         };
+        apiResponse.success = true;
+        apiResponse.status = 200;
+        apiResponse.message = 'Login successfully!';
 
         return apiResponse;
     },
 
     refresh: async (userId: string, refreshToken: string) => {
         const apiResponse: ApiResponse<ITokens> = {
-            success: true,
-            status: 201,
+            success: false,
+            status: 500,
             data: null,
             timestamp: new Date().toISOString(),
         };
@@ -133,6 +139,9 @@ export const authService = {
         // on stock le nouveau refreshToken en base pour la rotation
         await storeRefreshToken(userId, newRefreshToken);
         apiResponse.data = { accessToken: newAccessToken, refreshToken: newRefreshToken };
+        apiResponse.success = true;
+        apiResponse.status = 200;
+        apiResponse.message = 'Token refreshed successfully!';
 
         return apiResponse;
     },

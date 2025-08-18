@@ -47,10 +47,10 @@ export const authMiddlewares = {
 
         try {
             // on vérifie la validité du token
-            const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as DecodedToken;
+            const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as UserPayload;
 
             // s'il est valide on attache ses information à decoded
-            (req as any).userId = decoded.userId;
+            (req as any).user = decoded;
             next();
         } catch (error) {
             console.log('Echec du rafrîchissement du Token ', error);
