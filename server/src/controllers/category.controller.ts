@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { categorySchema } from 'schemas/category.schema';
-import { categoryService } from 'services/category.service';
+import { categorySchema } from '../schemas';
+import { categoryService } from '../services';
 
 export const createCategoryController = async (req: Request, res: Response, next: NextFunction) => {
     try {

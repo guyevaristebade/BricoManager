@@ -1,9 +1,9 @@
-import { locationInput } from '../schemas/location.schema';
+import { locationInput } from '../schemas';
 import { prisma } from '../config';
 import { ApiResponse } from '../types';
-import { NotFoundError } from 'errors/not-found.error';
+import { NotFoundError } from '../errors';
 import { cloudinaryService } from './cloudinary.service';
-import { cleanupFile } from 'helpers';
+import { cleanupFile } from '../helpers';
 
 export const locationService = {
     create: async (locationData: locationInput, file?: Express.Multer.File) => {

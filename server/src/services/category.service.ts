@@ -1,6 +1,6 @@
-import { prisma } from 'config';
-import { categoryInput } from 'schemas/category.schema';
-import { ApiResponse } from 'types';
+import { prisma } from '../config';
+import { categoryInput } from '../schemas';
+import { ApiResponse } from '../types';
 
 export const categoryService = {
     create: async (categoryData: categoryInput) => {

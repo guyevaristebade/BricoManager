@@ -1,6 +1,6 @@
 import { UploadApiResponse } from 'cloudinary';
 import cloudinary from '../config/cloudinary.config';
-import { cleanupFile } from 'helpers';
+import { cleanupFile } from '../helpers';
 
 export const cloudinaryService = {
     upload: async (file: Express.Multer.File, storageFileName: string): Promise<UploadApiResponse> => {

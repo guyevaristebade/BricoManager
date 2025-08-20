@@ -1,8 +1,8 @@
-import { cloudinaryService } from 'services';
+import { cloudinaryService } from '../services';
 import { prisma } from '../config';
 import { createToolInput, updateToolInput } from '../schemas';
 import { ApiResponse } from '../types';
-import { NotFoundError } from 'errors/not-found.error';
+import { NotFoundError } from '../errors';
 
 export const toolService = {
     create: async (toolData: createToolInput, file: Express.Multer.File) => {

@@ -1,5 +1,5 @@
-import { authMiddlewares } from '../middlewares';
 import { Router } from 'express';
+import { authMiddlewares } from '../middlewares';
 import {
     getLocationByIdController,
     updateLocationController,
@@ -7,7 +7,7 @@ import {
     createLocationController,
     getAllLocationsController,
 } from '../controllers';
-import { upload } from 'helpers';
+import { upload } from '../helpers';
 
 export const locationRouter = Router();
 

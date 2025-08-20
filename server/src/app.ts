@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { errorHandler } from './middlewares';
 import { authRouter, userRouter, toolRouter, categoryRouter, locationRouter } from './routes';
-import { limiter } from 'helpers';
+import { limiter } from './helpers';
 
 dotenv.config();
 

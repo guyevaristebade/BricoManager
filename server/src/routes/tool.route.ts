@@ -1,5 +1,5 @@
-import { authMiddlewares } from '../middlewares';
 import { Router } from 'express';
+import { authMiddlewares } from '../middlewares';
 import {
     createToolController,
     deleteToolController,
@@ -7,7 +7,7 @@ import {
     getToolsController,
     updateToolController,
 } from '../controllers';
-import { upload } from 'helpers';
+import { upload } from '../helpers';
 
 export const toolRouter = Router();
 

@@ -1,10 +1,6 @@
 import { authMiddlewares } from '../middlewares';
 import { Router } from 'express';
-import {
-    createCategoryController,
-    deleteCategoryController,
-    editCategoryController,
-} from 'controllers/category.controller';
+import { createCategoryController, deleteCategoryController, editCategoryController } from '../controllers';
 
 export const categoryRouter = Router();
 

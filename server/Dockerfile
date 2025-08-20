@@ -1,17 +1,25 @@
-# Choisir une image de base
-FROM mcp/postgres
+FROM node:alpine3.22
 
-# Définir le répertoire de travail
-WORKDIR ./
+WORKDIR /app
 
-# Copier les fichiers nécessaires
-COPY <source> <destination>
+# Installer pnpm
+RUN npm install -g pnpm
+
+# Copier d'abord les fichiers de dépendances
+COPY pnpm-lock.yaml ./
+COPY package.json ./
 
 # Installer les dépendances
-RUN <commande>
+RUN pnpm install
 
-# Exposer les ports nécessaires
-EXPOSE 5000:5000
+# Copier les fichiers nécessaires
+COPY . .
 
-# Définir la commande de démarrage
-CMD ["<commande>"]
+# Générer le client Prisma && compiler le code TypeScript
+RUN pnpm prisma generate  &&  pnpm run build
+
+# Exposer le port 3000
+EXPOSE 3000:3000
+
+# Démarrer l'application
+CMD ["pnpm", "run", "start"]
