@@ -15,7 +15,7 @@ export const createCategoryController = async (req: Request, res: Response, next
 export const editCategoryController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const categoryParsedData = categorySchema.parse(req.body);
-        const apiResponse = await categoryService.edit(req.params.categoryId, categoryParsedData);
+        const apiResponse = await categoryService.update(req.params.categoryId, categoryParsedData);
         res.status(apiResponse.status).json(apiResponse);
     } catch (error) {
         next(error);

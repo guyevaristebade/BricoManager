@@ -25,9 +25,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   loginAt DateTime @default(now())
-  project Project[]
 
   profile UserProfile? // un profile appartient à un utilisateur unique
+
+  project Project[]
+  Tool Tool[]
+  Location Location[]
 }
 
 // Représente le profil d'un utilisateur 
@@ -70,6 +73,7 @@ model ProjectImage {
 // Représente un outil
 model Tool{
   id                String   @id @default(cuid())
+  userId            String  
   toolName          String 
   toolCategoryId    String
   toolDescription   String
@@ -82,7 +86,8 @@ model Tool{
   toolPrice         Float
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  
+
+  user              User @relation(fields: [userId], references: [id]) // un outil appartient à un utilisateur
   category          Category @relation(fields: [toolCategoryId], references: [id]) // un outil appartient à une catégory d'outil
   location          Location @relation(fields: [locationId], references: [id]) // un outil appartient à un emplacement
 
@@ -92,21 +97,15 @@ model Tool{
 // représente l'emplacement d'un outil
 model Location {
   id      String @id @default(cuid())
+  userId  String
   locationName String
   locationImgUrl  String?
   locationPublicId String?
   tools Tool[] // un emplacement peut contenir plusieurs outils
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) // un emplacement appartient à un utilisateur
 }
 
-// représente l'image d'un outil
-// model ToolImage {
-//   id      String @id @default(cuid())
-//   toolId  String
-//   url     String
-//   public_id String?
-
-//   tool    Tool  @relation(fields: [toolId], references: [id], onDelete: Cascade) // une image appartient à un tool
-// }
 
 // représent la catégorie d'un outil
 model Category{

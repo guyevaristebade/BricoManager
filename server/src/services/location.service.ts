@@ -1,5 +1,5 @@
 import { locationInput } from '../schemas';
-import { prisma } from '../config';
+import prisma from '../config/db.config';
 import { ApiResponse } from '../types';
 import { NotFoundError } from '../errors';
 import { cloudinaryService } from './cloudinary.service';

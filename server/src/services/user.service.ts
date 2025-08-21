@@ -1,6 +1,7 @@
-import { prisma } from '../config';
+import prisma from '../config/db.config';
 import { UnauthorizedError } from '../errors';
-import { ApiResponse, UserInfos } from '../types';
+import { UserInfos } from '../interfaces';
+import { ApiResponse } from '../types';
 
 export const userService = {
     find: async (userId: string) => {

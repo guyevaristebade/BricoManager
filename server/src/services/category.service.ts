@@ -1,4 +1,4 @@
-import { prisma } from '../config';
+import prisma from '../config/db.config';
 import { categoryInput } from '../schemas';
 import { ApiResponse } from '../types';
 
@@ -26,7 +26,7 @@ export const categoryService = {
         return apiResponse;
     },
 
-    edit: async (categoryId: string, categoryData: categoryInput) => {
+    update: async (categoryId: string, categoryData: categoryInput) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 200,

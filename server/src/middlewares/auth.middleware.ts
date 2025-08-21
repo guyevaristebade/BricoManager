@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { UserPayload } from '../types';
+import { UserPayload } from '../interfaces';
 import { UnauthorizedError } from '../errors';
 import { ZodObject, ZodError } from 'zod';
 

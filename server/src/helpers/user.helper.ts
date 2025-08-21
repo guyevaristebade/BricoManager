@@ -1,4 +1,4 @@
-import { prisma } from '../config';
+import prisma from '../config/db.config';
 
 export const updateLoginAt = async (userId: string) => {
     await prisma.user.update({

@@ -1,4 +1,4 @@
-import { prisma } from '../src/config';
+import prisma from '../src/config/db.config';
 
 // Données de seed pour les catégories d'outils
 const categoriesData = [
@@ -53,42 +53,6 @@ const categoriesData = [
     { categoryName: 'Nettoyeurs haute pression' },
 ];
 
-// Données de seed pour les emplacements
-const locationsData = [
-    {
-        locationName: 'Garage - Étagère A',
-        locationImgUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-    },
-    {
-        locationName: 'Garage - Étagère B',
-        locationImgUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-    },
-    {
-        locationName: 'Atelier - Établi',
-        locationImgUrl: 'https://images.unsplash.com/photo-1581092795442-5d8e564b7e0d?w=400',
-    },
-    {
-        locationName: 'Atelier - Armoire',
-        locationImgUrl: 'https://images.unsplash.com/photo-1581092795442-5d8e564b7e0d?w=400',
-    },
-    {
-        locationName: 'Abri de jardin',
-        locationImgUrl: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    },
-    {
-        locationName: 'Cave - Rangement',
-        locationImgUrl: 'https://images.unsplash.com/photo-1609684935665-87a9b57c7a8e?w=400',
-    },
-    {
-        locationName: 'Placard - Outils électriques',
-        locationImgUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-    },
-    {
-        locationName: 'Garage - Sol (gros outils)',
-        locationImgUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-    },
-];
-
 async function main() {
     console.log('🌱 Début du seeding...');
 
@@ -105,21 +69,11 @@ async function main() {
         });
         console.log(`✅ ${categories.count} catégories créées`);
 
-        // Créer les emplacements
-        console.log('📍 Création des emplacements...');
-        const locations = await prisma.location.createMany({
-            data: locationsData,
-            skipDuplicates: true,
-        });
-        console.log(`✅ ${locations.count} emplacements créés`);
-
         // Afficher un résumé
         const totalCategories = await prisma.category.count();
-        const totalLocations = await prisma.location.count();
 
         console.log('\n📊 Résumé du seeding :');
         console.log(`   - Catégories : ${totalCategories}`);
-        console.log(`   - Emplacements : ${totalLocations}`);
         console.log('\n🎉 Seeding terminé avec succès !');
     } catch (error) {
         console.error('❌ Erreur during seeding:', error);
