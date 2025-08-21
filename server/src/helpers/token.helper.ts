@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { prisma } from '../config';
-import { UserPayload } from '../types';
+import prisma from '../config/db.config';
+import { UserPayload } from '../interfaces';
 
 export const generateAccessToken = (user: UserPayload) => {
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '15m' });

@@ -1,7 +1,8 @@
-import { prisma } from '../config';
+import prisma from '../config/db.config';
 import { ConflitError, UnauthorizedError } from '../errors';
 import { loginInput, RegisterInput } from '../schemas';
-import { ApiResponse, userWithoutRole, UserPayloadWithTokens, ITokens, UserPayload } from '../types';
+import { userWithoutRole, UserPayloadWithTokens, ITokens, UserPayload } from '../interfaces';
+import { ApiResponse } from '../types';
 import {
     generateAccessToken,
     generateRefreshToken,

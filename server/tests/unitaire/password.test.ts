@@ -1,4 +1,4 @@
-import { hashPassword, comparePassword } from '../../helpers';
+import { hashPassword, comparePassword } from '../../src/helpers';
 
 describe('Helpers de gestion des mots de passe (hash & compare)', () => {
     const password = 'mySecurePassword';

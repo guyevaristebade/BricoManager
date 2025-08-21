@@ -1,18 +1,6 @@
-/**
- * Représente la structure standard d'une réponse pour les requêtes du serveur.
- *
- * Utilise cette interface pour uniformiser les réponses de ton API et faciliter le traitement côté client.
- */
-interface ResponseType<T> {
-    success: boolean;
-    status: number;
-    data: T | null;
-    message?: string;
-    meta?: Record<string, any>;
-    timestamp: string;
-}
-
+import { ResponseType } from '../interfaces';
 // alias de type pour une réponse générique
+
 export type ApiResponse<T = any> = ResponseType<T>;
 
 // success: boolean; // plus universel que "ok"

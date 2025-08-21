@@ -1,8 +1,9 @@
 import { cloudinaryService } from '../services';
-import { prisma } from '../config';
+import prisma from '../config/db.config';
 import { createToolInput, updateToolInput } from '../schemas';
 import { ApiResponse } from '../types';
 import { NotFoundError } from '../errors';
+import { IToolQuery } from '@interfaces/tool.interface';
 
 export const toolService = {
     create: async (toolData: createToolInput, file: Express.Multer.File) => {
@@ -31,7 +32,7 @@ export const toolService = {
         return apiResponse;
     },
 
-    findAll: async () => {
+    findAll: async (query?: IToolQuery) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -39,7 +40,15 @@ export const toolService = {
             timestamp: new Date().toISOString(),
         };
 
-        const tools = await prisma.tool.findMany();
+        const tools = await prisma.tool.findMany({
+            where: {
+                ...query,
+            },
+            include: {
+                category: true,
+                location: true,
+            },
+        });
 
         apiResponse.success = true;
         apiResponse.message = 'Tools retrieved successfully';
@@ -59,6 +68,10 @@ export const toolService = {
 
         const tool = await prisma.tool.findUnique({
             where: { id },
+            include: {
+                category: true,
+                location: true,
+            },
         });
 
         if (!tool) {
@@ -83,6 +96,10 @@ export const toolService = {
 
         const existingTool = await prisma.tool.findUnique({
             where: { id },
+            include: {
+                category: true,
+                location: true,
+            },
         });
 
         if (!existingTool) throw new NotFoundError('Tool not found');
@@ -112,6 +129,10 @@ export const toolService = {
         let tool;
         const existingTool = await prisma.tool.findUnique({
             where: { id },
+            include: {
+                category: true,
+                location: true,
+            },
         });
 
         // find tool
@@ -133,12 +154,20 @@ export const toolService = {
                     toolImageUrl: uploadResult.secure_url,
                     toolPublicId: uploadResult.public_id,
                 },
+                include: {
+                    category: true,
+                    location: true,
+                },
             });
         } else {
             // update without image
             tool = await prisma.tool.update({
                 where: { id },
                 data: updateToolData,
+                include: {
+                    category: true,
+                    location: true,
+                },
             });
         }
 

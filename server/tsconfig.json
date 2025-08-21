@@ -21,9 +21,11 @@
             "@schemas/*": ["schemas/*"],
             "@services/*": ["services/*"],
             "@helpers/*": ["helpers/*"],
-            "@types/*": ["types/*"]
+            "@types/*": ["types/*"],
+            "@repositories/*": ["repositories/*"],
+            "@interfaces/*": ["interfaces/*"]
         }
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "src/tests"]
+    "include": ["src/**/*", "tests"],
+    "exclude": ["node_modules", "tests"]
 }

@@ -1,6 +1,10 @@
-export const authConfig = {
+import e from 'express';
+
+const authConfig = {
     accessSecret: process.env.ACCESS_TOKEN_SECRET!,
     accessExpireIn: process.env.ACCESS_TOKEN_EXPIRE!,
     RefreshSecret: process.env.REFRESH_TOKEN_SECRET!,
     RefreshExpireIn: process.env.REFRESH_TOKEN_EXPIRE!,
 };
+
+export default authConfig;
