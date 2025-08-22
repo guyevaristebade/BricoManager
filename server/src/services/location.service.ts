@@ -6,7 +6,7 @@ import { cloudinaryService } from './cloudinary.service';
 import { cleanupFile } from '../helpers';
 
 export const locationService = {
-    create: async (locationData: locationInput, file?: Express.Multer.File) => {
+    create: async (createLocationData: locationInput, userId: string, file?: Express.Multer.File) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -16,19 +16,26 @@ export const locationService = {
 
         let location;
 
+        if (!userId) {
+            throw new Error('User ID is required');
+        }
+
         if (file) {
             // upload location image on cloudinary
             const savedImage = await cloudinaryService.upload(file, 'location');
             location = await prisma.location.create({
                 data: {
-                    ...locationData,
+                    ...createLocationData,
+                    userId,
                     locationImgUrl: savedImage.secure_url,
                     locationPublicId: savedImage.public_id,
-                } as any, // as any car dans ma validation location.schema.ts une donnée est en optional
+                },
             });
+            // cleanup temporary file
+            await cleanupFile(file.path);
         } else {
             location = await prisma.location.create({
-                data: locationData as any,
+                data: { ...createLocationData, userId },
             });
         }
 
@@ -40,7 +47,7 @@ export const locationService = {
         return apiResponse;
     },
 
-    findAll: async () => {
+    findAll: async (userId: string) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -48,7 +55,9 @@ export const locationService = {
             timestamp: new Date().toISOString(),
         };
 
-        const locations = await prisma.location.findMany();
+        const locations = await prisma.location.findMany({
+            where: { userId },
+        });
 
         apiResponse.data = locations;
         apiResponse.success = true;
@@ -58,7 +67,7 @@ export const locationService = {
         return apiResponse;
     },
 
-    findById: async (id: string) => {
+    findById: async (id: string, userId: string) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -67,7 +76,7 @@ export const locationService = {
         };
 
         const location = await prisma.location.findUnique({
-            where: { id },
+            where: { id, userId },
         });
 
         if (!location) throw new NotFoundError('Location not found');
@@ -80,7 +89,7 @@ export const locationService = {
         return apiResponse;
     },
 
-    update: async (id: string, locationData: locationInput, file?: Express.Multer.File) => {
+    update: async (id: string, updateData: locationInput, userId: string, file?: Express.Multer.File) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -89,7 +98,7 @@ export const locationService = {
         };
 
         const existingLocation = await prisma.location.findUnique({
-            where: { id },
+            where: { id, userId },
         });
 
         if (!existingLocation) throw new NotFoundError('Location not found');
@@ -109,27 +118,28 @@ export const locationService = {
 
                 // Mise à jour avec nouvelle image + données
                 location = await prisma.location.update({
-                    where: { id },
+                    where: { id, userId },
                     data: {
-                        ...locationData,
+                        ...updateData,
                         locationImgUrl: savedImage.secure_url,
                         locationPublicId: savedImage.public_id,
                     },
                 });
+
                 // Nettoyage du fichier temporaire
                 await cleanupFile(file.path);
             } catch (error) {
                 // En cas d'erreur upload, on met à jour seulement les autres données
                 location = await prisma.location.update({
                     where: { id },
-                    data: locationData,
+                    data: updateData,
                 });
             }
         } else {
             // Cas 3 : Pas de nouvelle image, mise à jour des données seulement
             location = await prisma.location.update({
-                where: { id },
-                data: locationData,
+                where: { id, userId },
+                data: updateData,
             });
         }
 
@@ -141,7 +151,7 @@ export const locationService = {
         return apiResponse;
     },
 
-    delete: async (id: string) => {
+    delete: async (id: string, userId: string) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -150,7 +160,7 @@ export const locationService = {
         };
 
         const existingLocation = await prisma.location.findUnique({
-            where: { id },
+            where: { id, userId },
         });
 
         if (!existingLocation) throw new NotFoundError('Location not found');
@@ -164,12 +174,12 @@ export const locationService = {
 
         if (!existingLocation.locationPublicId && !existingLocation.locationPublicId) {
             await prisma.location.delete({
-                where: { id },
+                where: { id, userId },
             });
         } else {
             await cloudinaryService.delete(existingLocation.locationPublicId!);
             await prisma.location.delete({
-                where: { id },
+                where: { id, userId },
             });
         }
 

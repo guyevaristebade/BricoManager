@@ -6,7 +6,7 @@ import { NotFoundError } from '../errors';
 import { IToolQuery } from '@interfaces/tool.interface';
 
 export const toolService = {
-    create: async (toolData: createToolInput, file: Express.Multer.File) => {
+    create: async (toolData: createToolInput, file: Express.Multer.File, userId: string) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -19,8 +19,13 @@ export const toolService = {
         const tool = await prisma.tool.create({
             data: {
                 ...toolData,
+                userId,
                 toolImageUrl: uploadResult.secure_url,
                 toolPublicId: uploadResult.public_id,
+            },
+            include: {
+                category: true,
+                location: true,
             },
         }); // prisma lève une erreur en cas d'échec
 
@@ -32,7 +37,7 @@ export const toolService = {
         return apiResponse;
     },
 
-    findAll: async (query?: IToolQuery) => {
+    findAll: async (userId: string, query?: IToolQuery) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -42,6 +47,7 @@ export const toolService = {
 
         const tools = await prisma.tool.findMany({
             where: {
+                userId,
                 ...query,
             },
             include: {
@@ -58,7 +64,7 @@ export const toolService = {
         return apiResponse;
     },
 
-    findById: async (id: string) => {
+    findById: async (id: string, userId: string) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -67,7 +73,7 @@ export const toolService = {
         };
 
         const tool = await prisma.tool.findUnique({
-            where: { id },
+            where: { id, userId },
             include: {
                 category: true,
                 location: true,
@@ -86,7 +92,7 @@ export const toolService = {
         return apiResponse;
     },
 
-    delete: async (id: string) => {
+    delete: async (id: string, userId: string) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -95,7 +101,7 @@ export const toolService = {
         };
 
         const existingTool = await prisma.tool.findUnique({
-            where: { id },
+            where: { id, userId },
             include: {
                 category: true,
                 location: true,
@@ -118,7 +124,7 @@ export const toolService = {
         return apiResponse;
     },
 
-    update: async (id: string, updateToolData: updateToolInput, file?: Express.Multer.File) => {
+    update: async (id: string, updateToolData: updateToolInput, userId: string, file?: Express.Multer.File) => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -151,6 +157,7 @@ export const toolService = {
                 where: { id },
                 data: {
                     ...updateToolData,
+                    userId,
                     toolImageUrl: uploadResult.secure_url,
                     toolPublicId: uploadResult.public_id,
                 },
@@ -162,7 +169,7 @@ export const toolService = {
         } else {
             // update without image
             tool = await prisma.tool.update({
-                where: { id },
+                where: { id, userId },
                 data: updateToolData,
                 include: {
                     category: true,

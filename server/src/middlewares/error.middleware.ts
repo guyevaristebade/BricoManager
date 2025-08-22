@@ -1,9 +1,17 @@
+import { ZodError } from 'zod';
 import { ApiResponse } from '../types';
 import { Request, Response, NextFunction } from 'express';
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-    const status = err.status || err.http_code || 500;
-    const message = err.message || 'Erreur server';
+    let message = 'Erreur server';
+
+    if (err instanceof ZodError) {
+        message = err.message;
+    } else {
+        message = err.message;
+    }
+
+    const status = err.status || 500;
     const apiResponse: ApiResponse = {
         success: false,
         data: null,
