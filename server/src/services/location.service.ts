@@ -1,12 +1,16 @@
-import { locationInput } from '../schemas';
-import prisma from '../config/db.config';
+import { locationInput, updateLocationInput } from '../schemas';
 import { ApiResponse } from '../types';
 import { NotFoundError } from '../errors';
 import { cloudinaryService } from './cloudinary.service';
-import { cleanupFile } from '../helpers';
+import { CreateLocationData } from '../interfaces';
+import { locationRepository } from '../repositories';
 
 export const locationService = {
-    create: async (createLocationData: locationInput, userId: string, file?: Express.Multer.File) => {
+    create: async (
+        createLocationData: locationInput,
+        userId: string,
+        file?: Express.Multer.File
+    ): Promise<ApiResponse> => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -14,30 +18,29 @@ export const locationService = {
             timestamp: new Date().toISOString(),
         };
 
-        let location;
+        // Vérifier si une location avec ce nom existe déjà pour cet utilisateur
+        const existingLocation = await locationRepository.findByName(userId, createLocationData.locationName);
 
-        if (!userId) {
-            throw new Error('User ID is required');
+        if (existingLocation) {
+            throw new Error('Location already exists');
         }
+
+        let locationData: CreateLocationData = {
+            ...createLocationData,
+            userId,
+        };
 
         if (file) {
             // upload location image on cloudinary
             const savedImage = await cloudinaryService.upload(file, 'location');
-            location = await prisma.location.create({
-                data: {
-                    ...createLocationData,
-                    userId,
-                    locationImgUrl: savedImage.secure_url,
-                    locationPublicId: savedImage.public_id,
-                },
-            });
-            // cleanup temporary file
-            await cleanupFile(file.path);
-        } else {
-            location = await prisma.location.create({
-                data: { ...createLocationData, userId },
-            });
+            locationData = {
+                ...locationData,
+                locationImgUrl: savedImage.secure_url,
+                locationPublicId: savedImage.public_id,
+            };
         }
+
+        const location = await locationRepository.create(locationData);
 
         apiResponse.data = location;
         apiResponse.success = true;
@@ -47,7 +50,7 @@ export const locationService = {
         return apiResponse;
     },
 
-    findAll: async (userId: string) => {
+    findAll: async (userId: string): Promise<ApiResponse> => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -55,9 +58,7 @@ export const locationService = {
             timestamp: new Date().toISOString(),
         };
 
-        const locations = await prisma.location.findMany({
-            where: { userId },
-        });
+        const locations = await locationRepository.findAll(userId);
 
         apiResponse.data = locations;
         apiResponse.success = true;
@@ -67,7 +68,7 @@ export const locationService = {
         return apiResponse;
     },
 
-    findById: async (id: string, userId: string) => {
+    findById: async (id: string, userId: string): Promise<ApiResponse> => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -75,9 +76,7 @@ export const locationService = {
             timestamp: new Date().toISOString(),
         };
 
-        const location = await prisma.location.findUnique({
-            where: { id, userId },
-        });
+        const location = await locationRepository.findById(id, userId);
 
         if (!location) throw new NotFoundError('Location not found');
 
@@ -89,7 +88,12 @@ export const locationService = {
         return apiResponse;
     },
 
-    update: async (id: string, updateData: locationInput, userId: string, file?: Express.Multer.File) => {
+    update: async (
+        id: string,
+        updateData: updateLocationInput,
+        userId: string,
+        file?: Express.Multer.File
+    ): Promise<ApiResponse> => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -97,9 +101,7 @@ export const locationService = {
             timestamp: new Date().toISOString(),
         };
 
-        const existingLocation = await prisma.location.findUnique({
-            where: { id, userId },
-        });
+        const existingLocation = await locationRepository.isExistById(id, userId);
 
         if (!existingLocation) throw new NotFoundError('Location not found');
 
@@ -117,30 +119,18 @@ export const locationService = {
                 }
 
                 // Mise à jour avec nouvelle image + données
-                location = await prisma.location.update({
-                    where: { id, userId },
-                    data: {
-                        ...updateData,
-                        locationImgUrl: savedImage.secure_url,
-                        locationPublicId: savedImage.public_id,
-                    },
+                location = await locationRepository.update(id, userId, {
+                    ...updateData,
+                    locationImgUrl: savedImage.secure_url,
+                    locationPublicId: savedImage.public_id,
                 });
-
-                // Nettoyage du fichier temporaire
-                await cleanupFile(file.path);
             } catch (error) {
                 // En cas d'erreur upload, on met à jour seulement les autres données
-                location = await prisma.location.update({
-                    where: { id },
-                    data: updateData,
-                });
+                location = await locationRepository.update(id, userId, updateData);
             }
         } else {
             // Cas 3 : Pas de nouvelle image, mise à jour des données seulement
-            location = await prisma.location.update({
-                where: { id, userId },
-                data: updateData,
-            });
+            location = await locationRepository.update(id, userId, updateData);
         }
 
         apiResponse.data = location;
@@ -151,7 +141,7 @@ export const locationService = {
         return apiResponse;
     },
 
-    delete: async (id: string, userId: string) => {
+    delete: async (id: string, userId: string): Promise<ApiResponse> => {
         const apiResponse: ApiResponse = {
             success: false,
             status: 500,
@@ -159,29 +149,20 @@ export const locationService = {
             timestamp: new Date().toISOString(),
         };
 
-        const existingLocation = await prisma.location.findUnique({
-            where: { id, userId },
-        });
+        const existingLocation = await locationRepository.isExistById(id, userId);
 
         if (!existingLocation) throw new NotFoundError('Location not found');
 
-        const toolsInThisLocation = await prisma.tool.findMany({
-            where: { locationId: id },
-        });
+        const toolsInThisLocation = await locationRepository.countToolsInLocation(id);
 
-        if (toolsInThisLocation.length > 0)
+        if (toolsInThisLocation > 0)
             throw new Error('Cannot delete location: tools are still associated with this location');
 
-        if (!existingLocation.locationPublicId && !existingLocation.locationPublicId) {
-            await prisma.location.delete({
-                where: { id, userId },
-            });
-        } else {
-            await cloudinaryService.delete(existingLocation.locationPublicId!);
-            await prisma.location.delete({
-                where: { id, userId },
-            });
+        if (existingLocation.locationPublicId) {
+            await cloudinaryService.delete(existingLocation.locationPublicId);
         }
+
+        await locationRepository.delete(id, userId);
 
         apiResponse.success = true;
         apiResponse.status = 200;

@@ -5,3 +5,9 @@ export const locationSchema = z.object({
 });
 
 export type locationInput = z.infer<typeof locationSchema>;
+
+export const updateLocationSchema = z.object({
+    locationName: z.string().optional(),
+});
+
+export type updateLocationInput = z.infer<typeof updateLocationSchema>;

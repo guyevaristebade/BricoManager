@@ -5,18 +5,19 @@ import { UnauthorizedError } from '../errors';
 import { ZodObject, ZodError } from 'zod';
 
 export const authMiddlewares = {
+    // Le middleware reçoit Request standard et ajoute la propriété user
     authenticatedUser: (req: Request, res: Response, next: NextFunction) => {
         const token = req.headers.authorization?.split(' ')[1];
 
         // on vérifie le token
-
         if (!token) throw new UnauthorizedError('Accès refusé');
 
         try {
             // on vérifie la validité du token
             const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as UserPayload;
 
-            // s'il est valide on attache ses information à decoded
+            // s'il est valide on attache ses information à req
+            // Ici on étend dynamiquement l'objet Request avec la propriété user
             (req as any).user = decoded;
             next();
         } catch (error) {
@@ -26,8 +27,9 @@ export const authMiddlewares = {
     },
 
     checkRole(role: string) {
+        // Ici aussi, on accepte Request et on fait le cast si nécessaire
         return async (req: Request, res: Response, next: NextFunction) => {
-            const userRole = (req as any).user.role;
+            const userRole = (req as any).user?.role;
             try {
                 if (userRole !== role) throw new UnauthorizedError("Vous n'avez pas les droits");
 
@@ -49,7 +51,7 @@ export const authMiddlewares = {
             // on vérifie la validité du token
             const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as UserPayload;
 
-            // s'il est valide on attache ses information à decoded
+            // s'il est valide on attache ses information à req
             (req as any).user = decoded;
             next();
         } catch (error) {
@@ -59,23 +61,26 @@ export const authMiddlewares = {
     },
 
     //
-    validationError: (schema: ZodObject) => {
-        return (req: Request, res: Response, next: NextFunction) => {
-            try {
-                schema.parse(req.body);
-                next();
-            } catch (error) {
-                if (error instanceof ZodError) {
-                    const message = error.issues[0].message;
-                    res.status(400).json({
-                        ok: false,
-                        status: 400,
-                        message,
-                    });
-                }
-                // au suivant si ce n'est pas le cas
-                next(error);
-            }
-        };
-    },
+    // validationError: (schema: ZodObject) => {
+    //     return (req: Request, res: Response, next: NextFunction) => {
+    //         try {
+    //             schema.parse(req.body);
+    //             next();
+    //         } catch (error) {
+    //             if (error instanceof ZodError) {
+    //                 const message = error.issues[0].message;
+    //                 res.status(400).json({
+    //                     success: false,
+    //                     data: null,
+    //                     status: 400,
+    //                     message,
+    //                 });
+    //                 return;
+    //             }
+    //             console.log(error, 'validation error');
+    //             // au suivant si ce n'est pas le cas
+    //             next(error);
+    //         }
+    //     };
+    // },
 };

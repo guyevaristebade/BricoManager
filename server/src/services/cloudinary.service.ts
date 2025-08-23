@@ -12,7 +12,7 @@ export const cloudinaryService = {
             quality: 'auto', // compression automatique
             fetch_format: 'auto', // convertit au format optimal selon le navigateur
             format: 'webp', // convertit l'image au format webp
-            width: 800,
+            width: 600,
             height: 600,
             crop: 'limit',
         };

@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 export interface UserPayload {
     id: string;
     email: string;
@@ -15,4 +17,8 @@ export interface UserPayloadWithTokens {
     user: UserPayload;
     accessToken: string;
     refreshToken: string;
+}
+
+export interface RequestWithUser extends Request {
+    user: UserPayload;
 }
