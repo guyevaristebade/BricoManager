@@ -2,7 +2,7 @@
 
 ## 1. Présentation du projet
 
-Nom du projet : `AHomeTools` -> `AMANKOU HOME TOOLS` -> `AHT`
+Nom du projet : `BricoManager`
 
 ### Objectif du projet :
 
