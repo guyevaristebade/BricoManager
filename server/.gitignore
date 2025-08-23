@@ -4,7 +4,7 @@ node_modules
 
 /src/generated/prisma
 
-./pense-bête.md
+pense-bête.md
 
 # Fichier de refactoring (ne pas commit)
-./Refactor.md
+Refactor.md
