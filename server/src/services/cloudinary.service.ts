@@ -26,7 +26,7 @@ export const cloudinaryService = {
 
             return result;
         } catch (error) {
-            console.error('Error uploading image to Cloudinary:', error);
+            // console.error('Error uploading image to Cloudinary:', error);
             throw new Error('Error uploading image');
         }
     },
@@ -37,7 +37,7 @@ export const cloudinaryService = {
 
             return true;
         } catch (error) {
-            console.log('Error deleting image from Cloudinary:', error);
+            // console.log('Error deleting image from Cloudinary:', error);
             throw new Error('Error deleting image : ' + error);
         }
     },
