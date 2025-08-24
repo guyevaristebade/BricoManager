@@ -1,33 +1,38 @@
 import { UploadApiResponse } from 'cloudinary';
 import cloudinary from '../config/cloudinary.config';
 import { cleanupFile } from '../helpers';
+import { getCloudinaryOptions } from '../utils';
 
 export const cloudinaryService = {
     upload: async (file: Express.Multer.File, storageFileName: string): Promise<UploadApiResponse> => {
-        const options = {
-            use_filename: true,
-            unique_filename: false,
-            overwrite: true,
-            folder: `BricoManager/${storageFileName}`,
-            quality: 'auto', // compression automatique
-            fetch_format: 'auto', // convertit au format optimal selon le navigateur
-            format: 'webp', // convertit l'image au format webp
-            width: 600,
-            height: 600,
-            crop: 'limit',
-        };
+        const options = getCloudinaryOptions(storageFileName);
 
         try {
             const result = await cloudinary.uploader.upload(file.path, options);
 
+            // changer l'emplacement de code
             if (result) {
                 await cleanupFile(file.path);
             }
 
             return result;
         } catch (error) {
-            // console.error('Error uploading image to Cloudinary:', error);
-            throw new Error('Error uploading image');
+            throw new Error((error as Error).message);
+        }
+    },
+
+    uploadMultiple: async (files: Express.Multer.File[], storageFileName: string): Promise<UploadApiResponse[]> => {
+        const options = getCloudinaryOptions(storageFileName);
+
+        try {
+            const results = await Promise.all(files.map((file) => cloudinary.uploader.upload(file.path, options)));
+
+            // changer la place de ce code
+            await Promise.all(files.map((file) => cleanupFile(file.path)));
+
+            return results;
+        } catch (error) {
+            throw new Error((error as Error).message);
         }
     },
 
@@ -37,8 +42,16 @@ export const cloudinaryService = {
 
             return true;
         } catch (error) {
-            // console.log('Error deleting image from Cloudinary:', error);
-            throw new Error('Error deleting image : ' + error);
+            throw new Error((error as Error).message);
+        }
+    },
+
+    deleteMultiple: async (public_ids: string[]): Promise<Boolean[]> => {
+        try {
+            const results = await Promise.all(public_ids.map((id) => cloudinary.uploader.destroy(id)));
+            return results;
+        } catch (error) {
+            throw new Error((error as Error).message);
         }
     },
 };

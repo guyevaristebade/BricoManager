@@ -5,3 +5,4 @@ export * from './response.interface';
 export * from './location.repository.interface';
 export * from './tool.interface';
 export * from './category.interface';
+export * from './project.interface';

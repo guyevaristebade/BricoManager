@@ -51,6 +51,7 @@ model Project {
   projectName         String
   projectStatus       ProjectStatus @default(PLANNED)
   projectDescription  String
+  projectProgress     Int       @default(0)
   projectStartDate    DateTime
   projectEndDate      DateTime?
   projectBudget       Float
@@ -62,12 +63,12 @@ model Project {
 
 // Représente une image de projet
 model ProjectImage {
-  id          String @id @default(cuid())
-  ProjectId   String
-  url         String
-  public_id   String?
+  id                    String @id @default(cuid())
+  projectId             String
+  projectImgUrl         String?
+  projectPublicId       String?
 
-  project    Project  @relation(fields: [ProjectId], references: [id], onDelete: Cascade) // une image appartient à un projet 
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade) // une image appartient à un projet 
 }
 
 // Représente un outil
