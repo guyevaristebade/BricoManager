@@ -25,9 +25,9 @@ app.use(cookieParser());
 app.use(limiter);
 
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/user', userRouter);
+app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tools', toolRouter);
-app.use('/api/v1/category', categoryRouter);
+app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/locations', locationRouter);
 
 app.use(errorHandler);
