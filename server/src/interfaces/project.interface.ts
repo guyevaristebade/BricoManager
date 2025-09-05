@@ -5,6 +5,9 @@ export interface ICreateProject {
     projectStartDate: Date;
     projectEndDate?: Date;
     projectBudget: number;
+    projectImgUrl?: string;
+    projectPublicId?: string;
+    userId: string;
 }
 
 export interface IUpdateProject {
@@ -15,4 +18,6 @@ export interface IUpdateProject {
     projectStartDate?: Date;
     projectEndDate?: Date;
     projectBudget?: number;
+    projectImgUrl?: string;
+    projectPublicId?: string;
 }

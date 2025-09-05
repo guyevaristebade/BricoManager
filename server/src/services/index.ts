@@ -4,3 +4,4 @@ export * from './tool.service';
 export * from './cloudinary.service';
 export * from './location.service';
 export * from './category.service';
+export * from './project.service';

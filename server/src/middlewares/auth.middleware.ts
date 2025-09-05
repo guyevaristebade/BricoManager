@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { UserPayload } from '../interfaces';
 import { UnauthorizedError } from '../errors';
-import { ZodObject, ZodError } from 'zod';
 
 export const authMiddlewares = {
     // Le middleware reçoit Request standard et ajoute la propriété user
@@ -21,7 +20,6 @@ export const authMiddlewares = {
             (req as any).user = decoded;
             next();
         } catch (error) {
-            console.log("Echec de l'authentification ! ", error);
             next(error);
         }
     },
@@ -55,7 +53,6 @@ export const authMiddlewares = {
             (req as any).user = decoded;
             next();
         } catch (error) {
-            console.log('Echec du rafrîchissement du Token ', error);
             next(error);
         }
     },

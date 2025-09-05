@@ -4,7 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { errorHandler } from './middlewares';
-import { authRouter, userRouter, toolRouter, categoryRouter, locationRouter } from './routes';
+import { authRouter, userRouter, toolRouter, categoryRouter, locationRouter, projectRouter } from './routes';
 import { limiter } from './helpers';
 
 dotenv.config();
@@ -29,6 +29,7 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tools', toolRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/locations', locationRouter);
+app.use('/api/v1/projects', projectRouter);
 
 app.use(errorHandler);
 

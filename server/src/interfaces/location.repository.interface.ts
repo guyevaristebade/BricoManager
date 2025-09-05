@@ -1,5 +1,3 @@
-import { Location } from '@prisma/client';
-
 export interface CreateLocationData {
     locationName: string;
     locationImgUrl?: string;
