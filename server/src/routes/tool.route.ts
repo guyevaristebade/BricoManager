@@ -1,22 +1,30 @@
 import { Router } from 'express';
 import { authMiddlewares } from '../middlewares';
-import {
-    createToolController,
-    deleteToolController,
-    getToolByIdController,
-    getToolsController,
-    updateToolController,
-} from '../controllers';
+import { toolCOntroller } from '../controllers';
 import { upload } from '../helpers';
+import { wrapController } from 'utils';
 
 export const toolRouter = Router();
 
-toolRouter.get('/:id', authMiddlewares.authenticatedUser, getToolByIdController);
+toolRouter.post('/', authMiddlewares.authenticatedUser, upload.single('image'), wrapController(toolCOntroller.create));
 
-toolRouter.delete('/:id', authMiddlewares.authenticatedUser, deleteToolController);
+toolRouter.get('/', authMiddlewares.authenticatedUser, wrapController(toolCOntroller.findAll));
 
-toolRouter.patch('/:id', authMiddlewares.authenticatedUser, upload.single('toolImage'), updateToolController);
+toolRouter.get('/:id', authMiddlewares.authenticatedUser, wrapController(toolCOntroller.findById));
 
-toolRouter.post('/', authMiddlewares.authenticatedUser, upload.single('toolImage'), createToolController);
+toolRouter.delete('/:id', authMiddlewares.authenticatedUser, wrapController(toolCOntroller.delete));
 
-toolRouter.get('/', authMiddlewares.authenticatedUser, getToolsController);
+toolRouter.patch(
+    '/:id',
+    authMiddlewares.authenticatedUser,
+    upload.single('image'),
+    wrapController(toolCOntroller.update)
+);
+
+// toolRouter.delete('/:id', authMiddlewares.authenticatedUser, deleteToolController);
+
+// toolRouter.patch('/:id', authMiddlewares.authenticatedUser, upload.single('toolImage'), updateToolController);
+
+// toolRouter.post('/', authMiddlewares.authenticatedUser, upload.single('toolImage'), createToolController);
+
+// toolRouter.get('/', authMiddlewares.authenticatedUser, getToolsController);

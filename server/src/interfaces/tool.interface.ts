@@ -1,5 +1,4 @@
-export interface IToolQuery {
-    status?: 'AVALIABLE' | 'UNAVALIABLE';
-    categoryId?: string;
-    locationId?: string;
+export interface IToolImg {
+    toolImageUrl: string;
+    toolPublicId: string;
 }

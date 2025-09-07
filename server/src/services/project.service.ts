@@ -77,6 +77,12 @@ export const projectService = {
     },
 
     delete: async (id: string, userId: string): Promise<Project | null> => {
+        const existingProject = await projectRepository.findById(id, userId);
+        if (!existingProject) throw new NotFoundError('Project not found');
+
+        if (existingProject.projectPublicId) {
+            await cloudinaryService.delete(existingProject.projectPublicId);
+        }
         return await projectRepository.delete(id, userId);
     },
 
