@@ -6,15 +6,6 @@ import { NextFunction, Response } from 'express';
 export const projectController = {
     create: async (req: RequestWithUser, res: Response, next: NextFunction) => {
         const userId = req.user.id;
-        // const createProjectData = {
-        //     projectName: req.body.projectName,
-        //     projectStatus: req.body.projectStatus,
-        //     projectDescription: req.body.projectDescription,
-        //     projectStartDate: new Date(req.body.projectStartDate),
-        //     projectEndDate: req.body.projectEndDate ? new Date(req.body.projectEndDate) : undefined,
-        //     projectBudget: parseInt(req.body.projectBudget),
-        //     userId,
-        // }; // à modifier
         const validatedData = createProjectSchema.parse(req.body);
         const file = req.file!;
 
@@ -58,6 +49,23 @@ export const projectController = {
                 data: projectResponse,
                 status: 200,
                 message: 'All project loaded',
+                timestamp: new Date().toISOString(),
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    findById: async (req: RequestWithUser, res: Response, next: NextFunction) => {
+        const userId = req.user.id;
+        const id = req.params.id;
+
+        try {
+            const projectResponse = await projectService.findById(id, userId);
+            res.status(200).json({
+                data: projectResponse,
+                status: 200,
+                message: 'Project loaded successfully',
                 timestamp: new Date().toISOString(),
             });
         } catch (error) {
