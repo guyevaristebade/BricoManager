@@ -1,6 +1,5 @@
 import prisma from '../config/db.config';
-import { categoryInput } from '../schemas';
-import { ApiResponse } from '../types';
+import { ApiResponse } from '../interfaces';
 import { categoryRepository } from '../repositories';
 
 export const categoryService = {

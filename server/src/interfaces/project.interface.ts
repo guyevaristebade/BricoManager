@@ -21,3 +21,8 @@ export interface IUpdateProject {
     projectImgUrl?: string;
     projectPublicId?: string;
 }
+
+export interface IProjectData {
+    projectImgUrl: string;
+    projectPublicId: string;
+}

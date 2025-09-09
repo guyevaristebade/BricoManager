@@ -24,6 +24,9 @@ app.use(cookieParser());
 
 app.use(limiter);
 
+app.get('/api/v1/test', (req, res) => {
+    res.json({ message: 'Server is working!' });
+});
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tools', toolRouter);

@@ -1,10 +1,10 @@
+import { Tool } from '@prisma/client';
 import { cloudinaryService } from '../services';
 import { createToolInput, updateToolInput } from '../schemas';
 import { ConflitError, NotFoundError } from '../errors';
 import { toolRepository } from '../repositories';
-import { IToolImg } from '@interfaces/tool.interface';
-import { Tool } from '@prisma/client';
-import { cleanupFile } from '@helpers/cleanupFile.helper';
+import { IToolImg } from '../interfaces/tool.interface';
+import { cleanupFile } from '../helpers/cleanupFile.helper';
 
 export const toolService = {
     create: async (userId: string, toolData: createToolInput, file: Express.Multer.File): Promise<Tool> => {

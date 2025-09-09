@@ -1,23 +1,21 @@
 import { ZodError } from 'zod';
-import { ApiResponse } from '../types';
+import { ApiResponse } from '../interfaces';
 import { Request, Response, NextFunction } from 'express';
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
     let message = 'Erreur server';
 
     if (err instanceof ZodError) {
-        message = err.message;
+        message = err.issues.map((issue) => issue.message).join(', ');
     } else {
         message = err.message;
     }
 
-    const status = err.status || 500;
-    const apiResponse: ApiResponse = {
+    res.status(err.status || 500).json({
         success: false,
         data: null,
-        status,
+        status: err.status || 500,
         message: message,
         timestamp: new Date().toISOString(),
-    };
-    res.status(status).json(apiResponse);
+    });
 };

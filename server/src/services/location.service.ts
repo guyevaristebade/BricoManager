@@ -1,5 +1,5 @@
 import { locationInput, updateLocationInput } from '../schemas';
-import { ApiResponse } from '../types';
+import { ApiResponse } from '../interfaces';
 import { NotFoundError } from '../errors';
 import { cloudinaryService } from './cloudinary.service';
 import { CreateLocationData } from '../interfaces';

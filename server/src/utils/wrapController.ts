@@ -1,14 +1,6 @@
 import { RequestWithUser } from '../interfaces';
-import { Router, Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
-/**
- * Wrapper pour les méthodes de contrôleur qui utilisent RequestWithUser
- *
- * Problème résolu :
- * - Express utilise le type Request standard qui n'inclut pas les propriétés personnalisées
- * - Nos contrôleurs attendent RequestWithUser (qui étend Request avec des propriétés comme 'user')
- * - TypeScript génère des erreurs de type lors du routage
- */
 export const wrapController = (
     // La méthode de contrôleur qui attend explicitement RequestWithUser
     controllerMethod: (req: RequestWithUser, res: Response, next: NextFunction) => Promise<void>
@@ -20,17 +12,3 @@ export const wrapController = (
         return controllerMethod(req as RequestWithUser, res, next);
     };
 };
-
-/**
- * Utilisation typique :
- * router.get('/profile', authenticateToken, wrapController(getUserProfile));
- *
- * Sans ce wrapper :
- * - TypeScript se plaint que Request n'a pas les propriétés de RequestWithUser
- * - Obligation de faire le cast dans chaque contrôleur individuellement
- *
- * Avec ce wrapper :
- * - Type safety préservée
- * - Code plus propre et DRY
- * - Centralisation de la logique de cast
- */

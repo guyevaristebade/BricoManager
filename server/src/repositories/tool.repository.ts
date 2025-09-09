@@ -1,4 +1,4 @@
-import prisma from '@config/db.config';
+import prisma from '../config/db.config';
 import { IToolImg } from '../interfaces';
 import { createToolInput, updateToolInput } from '../schemas';
 import { Tool } from '@prisma/client';

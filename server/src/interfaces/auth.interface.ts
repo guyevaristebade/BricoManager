@@ -19,6 +19,11 @@ export interface UserPayloadWithTokens {
     refreshToken: string;
 }
 
+export interface ITokens {
+    accessToken: string;
+    refreshToken: string;
+}
+
 export interface RequestWithUser extends Request {
     user: UserPayload;
 }

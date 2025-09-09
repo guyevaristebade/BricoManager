@@ -1,7 +1,7 @@
 import { Project } from '@prisma/client';
 import prisma from '../config/db.config';
 import { createProjectInput, updateProjectInput } from '../schemas';
-import { IProjectData } from '../types';
+import { IProjectData } from '../interfaces';
 
 export const projectRepository = {
     create: async (userId: string, data: createProjectInput, imgData?: IProjectData): Promise<Project> => {

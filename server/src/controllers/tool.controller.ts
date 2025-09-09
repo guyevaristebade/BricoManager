@@ -1,4 +1,4 @@
-import { RequestWithUser } from '@interfaces/auth.interface';
+import { RequestWithUser } from '../interfaces';
 import { createToolSchema, updateToolSchema } from '../schemas';
 import { toolService } from '../services';
 import { NextFunction, Response } from 'express';

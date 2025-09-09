@@ -1,70 +1,81 @@
 import { Request, Response, NextFunction } from 'express';
 import { authService } from '../services';
-import { loginSchema, registerSchema } from '../schemas';
+import { registerSchema } from '../schemas';
 import { generateCookie } from '../helpers';
 
-export const registerController = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const parsedData = registerSchema.parse(req.body); // je vais délégué la vérification à un middlewares de validation d'erreur Zod qui va prendre le schema en parametre
-        const response = await authService.register(parsedData);
-        res.status(201).json(response);
-    } catch (error) {
-        next(error);
-    }
-};
+export const authController = {
+    register: async (req: Request, res: Response, next: NextFunction) => {
+        const validatedData = registerSchema.parse(req.body);
+        try {
+            const user = await authService.register(validatedData);
+            res.status(201).json({
+                success: true,
+                status: 201,
+                data: user,
+                message: 'User registered successfully',
+                timestamp: new Date().toISOString(),
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 
-export const loginController = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        // on parse l'entrée utilisateur avec zod
-        const parsedData = loginSchema.parse(req.body); // je vais délégué la vérification à un middlewares de validation d'erreur Zod qui va prendre le schema en parametre
+    login: async (req: Request, res: Response, next: NextFunction) => {
+        // const parsedData = loginSchema.parse(req.body);
 
-        const response = await authService.login(parsedData);
-        const refreshToken = response.data?.refreshToken;
+        try {
+            const loginResponse = await authService.login(req.body);
 
-        // on stock le refreshToken dans un cookie
-        generateCookie(refreshToken!, res);
+            // on stock le refreshToken dans un cookie
+            generateCookie(loginResponse.refreshToken, res);
 
-        res.status(201).json(response);
-    } catch (error) {
-        next(error);
-    }
-};
+            res.status(201).json({
+                success: true,
+                status: 201,
+                data: loginResponse,
+                message: 'User logged in successfully',
+                timestamp: new Date().toISOString(),
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 
-export const refreshController = async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user.id;
-    console.log(userId);
-    const refreshToken = req.cookies.refresh_token;
+    refreshToken: async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.user!.id;
+        const refreshToken = req.cookies.refresh_token;
 
-    try {
-        const response = await authService.refresh(userId, refreshToken);
+        try {
+            const response = await authService.refresh(userId!, refreshToken);
 
-        const newAccessToken = response.data?.accessToken as string;
-        const newRefreshToken = response.data?.refreshToken as string;
+            res.status(201).json({
+                success: true,
+                status: 201,
+                data: response,
+                message: 'Token refresh successfully',
+                timestamp: new Date().toISOString(),
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 
-        //console.log((req as any).userId);
-        await generateCookie(newRefreshToken, res);
+    logout: async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.user!.id;
 
-        response.message = 'Token rafraîchit avec succès';
+        try {
+            const logoutResponse = await authService.logout(userId);
+            res.clearCookie('refresh_token');
 
-        res.status(201).json({
-            ok: true,
-            status: 201,
-            data: { accessToken: newAccessToken },
-            message: 'Token rafraîchit avec succès',
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const logoutController = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const userId = (req as any).user.id;
-        const logoutResponse = await authService.logout(userId);
-        res.clearCookie('refresh_token');
-
-        res.status(201).json(logoutResponse);
-    } catch (error) {
-        next(error);
-    }
+            res.status(201).json({
+                success: true,
+                status: 201,
+                data: logoutResponse,
+                message: 'Déconnexion successfully',
+                timestamp: new Date().toISOString(),
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 };
