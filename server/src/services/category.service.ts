@@ -1,4 +1,3 @@
-import prisma from '../config/db.config';
 import { ApiResponse } from '../interfaces';
 import { categoryRepository } from '../repositories';
 
@@ -38,51 +37,4 @@ export const categoryService = {
 
         return apiResponse;
     },
-
-    // create: async (categoryData: categoryInput) => {
-    //     const apiResponse: ApiResponse = {
-    //         success: false,
-    //         status: 201,
-    //         data: null,
-    //         timestamp: Date.now().toLocaleString(),
-    //     };
-
-    //     const category = await prisma.category.create({
-    //         data: categoryData,
-    //     });
-
-    //     if (!category) {
-    //         throw new Error('Failed to create category');
-    //     }
-
-    //     apiResponse.success = true;
-    //     apiResponse.message = 'Category created successfully';
-    //     apiResponse.data = category;
-
-    //     return apiResponse;
-    // },
-
-    // update: async (categoryId: string, categoryData: categoryInput) => {
-    //     const apiResponse: ApiResponse = {
-    //         success: false,
-    //         status: 200,
-    //         data: null,
-    //         timestamp: Date.now().toLocaleString(),
-    //     };
-
-    //     const category = await prisma.category.update({
-    //         where: { id: categoryId },
-    //         data: categoryData,
-    //     });
-
-    //     if (!category) {
-    //         throw new Error('Failed to update category');
-    //     }
-
-    //     apiResponse.success = true;
-    //     apiResponse.message = 'Category updated successfully';
-    //     apiResponse.data = { category };
-
-    //     return apiResponse;
-    // },
 };

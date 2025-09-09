@@ -1,11 +1,16 @@
 import { Location } from '@prisma/client';
 import prisma from '../config/db.config';
-import { CreateLocationData, UpdateLocationData } from '../interfaces';
+import { LocationImageData, UpdateLocationData } from '../interfaces';
+import { locationInput } from 'schemas';
 
 export const locationRepository = {
-    create: async (data: CreateLocationData): Promise<Location> => {
+    create: async (userId: string, data: locationInput, locationImgData?: LocationImageData): Promise<Location> => {
         return prisma.location.create({
-            data,
+            data: {
+                ...data,
+                userId,
+                ...locationImgData,
+            },
         });
     },
 
@@ -13,16 +18,6 @@ export const locationRepository = {
         return prisma.location.findMany({
             where: {
                 userId,
-            },
-            include: {
-                tools: {
-                    select: {
-                        // on selectionne uniquement les champs nécessaires
-                        id: true,
-                        toolName: true,
-                        toolStatus: true,
-                    },
-                },
             },
             orderBy: {
                 locationName: 'asc',
@@ -35,15 +30,6 @@ export const locationRepository = {
             where: {
                 id,
                 userId,
-            },
-            include: {
-                tools: {
-                    select: {
-                        id: true,
-                        toolName: true,
-                        toolStatus: true,
-                    },
-                },
             },
         });
     },

@@ -33,6 +33,13 @@ export const toolRepository = {
         });
     },
 
+    findByLocationId: async (locationId: string, userId: string): Promise<Tool[]> => {
+        return await prisma.tool.findMany({
+            where: { locationId, userId },
+            orderBy: { toolName: 'asc' },
+        });
+    },
+
     delete: async (id: string, userId: string): Promise<Tool | null> => {
         return prisma.tool.delete({
             where: { id, userId },
