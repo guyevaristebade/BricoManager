@@ -1,5 +1,6 @@
+import { editUserInput } from 'schemas/user.schema';
 import prisma from '../config/db.config';
-import { User, UserProfile } from '@prisma/client';
+import { User } from '@prisma/client';
 
 export const userRepository = {
     me: async (userId: string): Promise<User | null> => {
@@ -14,12 +15,6 @@ export const userRepository = {
         });
     },
 
-    findById: async (userId: string): Promise<User | null> => {
-        return await prisma.user.findUnique({
-            where: { id: userId },
-        });
-    },
-
     updateRefreshToken: async (userId: string, token: string | null): Promise<User> => {
         return await prisma.user.update({
             where: { id: userId },
@@ -31,6 +26,13 @@ export const userRepository = {
         await prisma.user.update({
             where: { id: userId },
             data: { loginAt: new Date() },
+        });
+    },
+
+    updateUserInfo: async (userId: string, data: editUserInput) => {
+        return await prisma.user.update({
+            where: { id: userId },
+            data,
         });
     },
 };

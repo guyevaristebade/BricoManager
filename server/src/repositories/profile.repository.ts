@@ -9,4 +9,10 @@ export const profileRepository = {
             },
         });
     },
+
+    getProfile: async (userId: string): Promise<UserProfile | null> => {
+        return await prisma.userProfile.findUnique({
+            where: { userId },
+        });
+    },
 };

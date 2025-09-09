@@ -1,36 +1,24 @@
-import prisma from '../config/db.config';
+import { profileRepository, userRepository } from 'repositories';
 import { UnauthorizedError } from '../errors';
-import { UserInfos } from '../interfaces';
-import { ApiResponse } from '../interfaces';
+import { removePassword } from 'utils';
+import { editUserInput } from 'schemas/user.schema';
 
 export const userService = {
-    find: async (userId: string) => {
-        const apiResponse: ApiResponse<UserInfos> = {
-            success: true,
-            status: 200,
-            data: null,
-            timestamp: Date.now().toLocaleString(),
-        };
-
-        if (!userId) throw new UnauthorizedError('Utilisateur invalide');
-
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-            select: {
-                id: true,
-                name: true,
-                role: true,
-                email: true,
-                createdAt: true,
-                updatedAt: true,
-                loginAt: true,
-            },
-        });
-
+    getUserInfo: async (userId: string) => {
+        const user = await userRepository.me(userId);
         if (!user) throw new UnauthorizedError('Accès refusé');
 
-        apiResponse.data = user;
+        const userProfile = await profileRepository.getProfile(userId);
+        const userWithoutPassword = removePassword(user);
 
-        return apiResponse;
+        return { user: userWithoutPassword, profile: userProfile };
+    },
+
+    editUserInfo: async (userId: string, data: editUserInput) => {
+        const user = await userRepository.me(userId);
+        if (!user) throw new UnauthorizedError('Accès refusé');
+
+        const updatedUser = await userRepository.updateUserInfo(userId, data);
+        return removePassword(updatedUser);
     },
 };

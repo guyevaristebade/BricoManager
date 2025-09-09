@@ -72,7 +72,7 @@ export const authService = {
         if (!userId) throw new UnauthorizedError('Utilisateur invalide');
 
         // on vérifie que le user existe et que la valeur de refreshToken en base n'est pas null
-        const user = await userRepository.findById(userId);
+        const user = await userRepository.me(userId);
         if (!user || !user.refreshToken) throw new UnauthorizedError('Accès refusé');
 
         // on vérifie que le token en base et celui du cookie sont identique
