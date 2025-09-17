@@ -1,11 +1,10 @@
-import { RequestWithUser } from '../interfaces';
 import { createToolSchema, updateToolSchema } from '../schemas';
 import { toolService } from '../services';
-import { NextFunction, Response } from 'express';
+import { NextFunction, Response, Request } from 'express';
 
-export const toolCOntroller = {
-    create: async (req: RequestWithUser, res: Response, next: NextFunction) => {
-        const userId = req.user.id;
+export const toolController = {
+    create: async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.user!.id;
         const validateData = createToolSchema.parse(req.body);
         const file = req.file;
         try {
@@ -22,8 +21,8 @@ export const toolCOntroller = {
         }
     },
 
-    findAll: async (req: RequestWithUser, res: Response, next: NextFunction) => {
-        const userId = req.user.id;
+    findAll: async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.user!.id;
         try {
             const tools = await toolService.findAll(userId);
             res.status(200).json({
@@ -38,8 +37,8 @@ export const toolCOntroller = {
         }
     },
 
-    findById: async (req: RequestWithUser, res: Response, next: NextFunction) => {
-        const userId = req.user.id;
+    findById: async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.user!.id;
         const toolId = req.params.id;
         try {
             const tool = await toolService.findById(toolId, userId);
@@ -55,8 +54,8 @@ export const toolCOntroller = {
         }
     },
 
-    delete: async (req: RequestWithUser, res: Response, next: NextFunction) => {
-        const userId = req.user.id;
+    delete: async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.user!.id;
         const toolId = req.params.id;
         try {
             const deleteToolResponse = await toolService.delete(toolId, userId);
@@ -72,8 +71,8 @@ export const toolCOntroller = {
         }
     },
 
-    update: async (req: RequestWithUser, res: Response, next: NextFunction) => {
-        const userId = req.user.id;
+    update: async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.user!.id;
         const toolId = req.params.id;
         const validateData = updateToolSchema.parse(req.body); // updateToolSchema.partial().parse(req.body); partial pour rendre tous les champs optionnels
         const file = req.file;

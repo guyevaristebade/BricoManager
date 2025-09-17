@@ -1,17 +1,16 @@
 import { Router } from 'express';
 import { authenticatedUser } from '../middlewares';
-import { toolCOntroller } from '../controllers';
+import { toolController } from '../controllers';
 import { upload } from '../helpers';
-import { wrapController } from 'utils';
 
 export const toolRouter = Router();
 
-toolRouter.post('/', authenticatedUser, upload.single('image'), wrapController(toolCOntroller.create));
+toolRouter.post('/', authenticatedUser, upload.single('image'), toolController.create);
 
-toolRouter.get('/', authenticatedUser, wrapController(toolCOntroller.findAll));
+toolRouter.get('/', authenticatedUser, toolController.findAll);
 
-toolRouter.get('/:id', authenticatedUser, wrapController(toolCOntroller.findById));
+toolRouter.get('/:id', authenticatedUser, toolController.findById);
 
-toolRouter.delete('/:id', authenticatedUser, wrapController(toolCOntroller.delete));
+toolRouter.delete('/:id', authenticatedUser, toolController.delete);
 
-toolRouter.patch('/:id', authenticatedUser, upload.single('image'), wrapController(toolCOntroller.update));
+toolRouter.patch('/:id', authenticatedUser, upload.single('image'), toolController.update);
