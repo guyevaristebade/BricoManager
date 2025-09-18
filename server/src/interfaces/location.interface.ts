@@ -11,7 +11,7 @@ export interface UpdateLocationData {
     locationPublicId?: string;
 }
 
-export interface LocationImageData {
+export interface LocationImgData {
     locationImgUrl: string;
     locationPublicId: string;
 }

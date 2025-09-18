@@ -1,5 +1,5 @@
 import { locationInput, updateLocationInput } from '../schemas';
-import { ApiResponse, LocationImageData } from '../interfaces';
+import { LocationImgData } from '../interfaces';
 import { ConflitError, NotFoundError } from '../errors';
 import { cloudinaryService } from './cloudinary.service';
 import { locationRepository, toolRepository } from '../repositories';
@@ -17,7 +17,7 @@ export const locationService = {
 
         if (existingLocation) throw new ConflitError('Location already exists');
 
-        let locationImgData: LocationImageData | undefined;
+        let locationImgData: LocationImgData | undefined;
 
         if (file) {
             // upload location image on cloudinary
@@ -55,81 +55,45 @@ export const locationService = {
         updateData: updateLocationInput,
         userId: string,
         file?: Express.Multer.File
-    ): Promise<ApiResponse> => {
-        const apiResponse: ApiResponse = {
-            success: false,
-            status: 500,
-            data: null,
-            timestamp: new Date().toISOString(),
-        };
-
+    ): Promise<Location> => {
         const existingLocation = await locationRepository.isExistById(id, userId);
 
         if (!existingLocation) throw new NotFoundError('Location not found');
 
-        let location;
+        let locationImgData: LocationImgData | undefined;
 
-        // Cas 1 & 2 : Nouvelle image fournie
         if (file) {
-            try {
-                // Upload nouvelle image
-                const savedImage = await cloudinaryService.upload(file, 'location');
+            const savedImage = await cloudinaryService.upload(file, 'location');
+            locationImgData = {
+                locationImgUrl: savedImage.secure_url,
+                locationPublicId: savedImage.public_id,
+            };
 
-                // Supprimer l'ancienne image SEULEMENT après succès du nouvel upload
-                if (existingLocation.locationPublicId) {
-                    await cloudinaryService.delete(existingLocation.locationPublicId);
-                }
-
-                // Mise à jour avec nouvelle image + données
-                location = await locationRepository.update(id, userId, {
-                    ...updateData,
-                    locationImgUrl: savedImage.secure_url,
-                    locationPublicId: savedImage.public_id,
-                });
-            } catch (error) {
-                // En cas d'erreur upload, on met à jour seulement les autres données
-                location = await locationRepository.update(id, userId, updateData);
+            if (existingLocation.locationPublicId) {
+                await cloudinaryService.delete(existingLocation.locationPublicId);
             }
-        } else {
-            // Cas 3 : Pas de nouvelle image, mise à jour des données seulement
-            location = await locationRepository.update(id, userId, updateData);
+
+            await cleanupFile(file.path);
         }
 
-        apiResponse.data = location;
-        apiResponse.success = true;
-        apiResponse.status = 200;
-        apiResponse.message = 'Location updated successfully';
+        const updateLocation = await locationRepository.update(id, userId, updateData, locationImgData);
 
-        return apiResponse;
+        return updateLocation;
     },
 
-    delete: async (id: string, userId: string): Promise<ApiResponse> => {
-        const apiResponse: ApiResponse = {
-            success: false,
-            status: 500,
-            data: null,
-            timestamp: new Date().toISOString(),
-        };
-
+    delete: async (id: string, userId: string): Promise<void> => {
         const existingLocation = await locationRepository.isExistById(id, userId);
 
         if (!existingLocation) throw new NotFoundError('Location not found');
 
-        const toolsInThisLocation = await locationRepository.countToolsInLocation(id);
+        const countTools = await locationRepository.countTools(id);
 
-        if (toolsInThisLocation > 0)
-            throw new Error('Cannot delete location: tools are still associated with this location');
+        if (countTools > 0) throw new Error('Cannot delete location: tools are still associated with this location');
 
         if (existingLocation.locationPublicId) {
             await cloudinaryService.delete(existingLocation.locationPublicId);
         }
 
         await locationRepository.delete(id, userId);
-
-        apiResponse.success = true;
-        apiResponse.status = 200;
-        apiResponse.message = 'Location deleted successfully';
-
-        return apiResponse;
     },
 };

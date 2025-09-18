@@ -1,10 +1,10 @@
 import { Location } from '@prisma/client';
 import prisma from '../config/db.config';
-import { LocationImageData, UpdateLocationData } from '../interfaces';
+import { LocationImgData, UpdateLocationData } from '../interfaces';
 import { locationInput } from 'schemas';
 
 export const locationRepository = {
-    create: async (userId: string, data: locationInput, locationImgData?: LocationImageData): Promise<Location> => {
+    create: async (userId: string, data: locationInput, locationImgData?: LocationImgData): Promise<Location> => {
         return prisma.location.create({
             data: {
                 ...data,
@@ -43,12 +43,17 @@ export const locationRepository = {
         });
     },
 
-    update: async (id: string, userId: string, data: UpdateLocationData): Promise<Location> => {
+    update: async (
+        id: string,
+        userId: string,
+        data: UpdateLocationData,
+        locationImgData?: LocationImgData
+    ): Promise<Location> => {
         return prisma.location.update({
             where: { id, userId },
-            data,
-            include: {
-                tools: true,
+            data: {
+                ...data,
+                ...locationImgData,
             },
         });
     },
@@ -62,7 +67,7 @@ export const locationRepository = {
         });
     },
 
-    countToolsInLocation: async (locationId: string): Promise<number> => {
+    countTools: async (locationId: string): Promise<number> => {
         return prisma.tool.count({
             where: {
                 locationId,

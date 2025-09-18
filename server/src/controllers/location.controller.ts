@@ -4,11 +4,11 @@ import { Request, NextFunction, Response } from 'express';
 
 export const locationController = {
     create: async (req: Request, res: Response, next: NextFunction) => {
-        // const locationParsedData = locationSchema.parse(req.body);
+        const locationParsedData = locationSchema.parse(req.body);
         const file = req.file;
-        const userId = req.user!!.id;
+        const userId = req.user!.id;
         try {
-            const locationResponse = await locationService.create(userId, req.body, file);
+            const locationResponse = await locationService.create(userId, locationParsedData, file);
 
             res.status(201).json({
                 success: true,
@@ -60,28 +60,40 @@ export const locationController = {
     },
 
     update: async (req: Request, res: Response, next: NextFunction) => {
+        const { id } = req.params;
+        const userId = req.user!.id;
+        const locationParsedData = locationSchema.parse(req.body);
+        const file = req.file;
+
         try {
-            const { id } = req.params;
-            const locationParsedData = locationSchema.parse(req.body);
-            const file = req.file;
-            const userId = req.user!.id;
+            const locationResponse = await locationService.update(id, locationParsedData, userId, file);
 
-            const apiResponse = await locationService.update(id, locationParsedData, userId, file);
-
-            res.status(apiResponse.status).json(apiResponse);
+            res.status(200).json({
+                success: true,
+                status: 200,
+                data: locationResponse,
+                message: 'Location updated successfully',
+                timestamp: new Date().toISOString(),
+            });
         } catch (error) {
             next(error);
         }
     },
 
     delete: async (req: Request, res: Response, next: NextFunction) => {
+        const { id } = req.params;
+        const userId = req.user!.id;
+
         try {
-            const { id } = req.params;
-            const userId = req.user!.id;
+            await locationService.delete(id, userId);
 
-            const apiResponse = await locationService.delete(id, userId);
-
-            res.status(apiResponse.status).json(apiResponse);
+            res.status(200).json({
+                success: true,
+                status: 200,
+                data: null,
+                message: 'Location deleted successfully',
+                timestamp: new Date().toISOString(),
+            });
         } catch (error) {
             next(error);
         }
