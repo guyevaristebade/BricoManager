@@ -1,6 +1,6 @@
 import { Tool } from '@prisma/client';
 import { cloudinaryService } from '../services';
-import { createToolInput, updateToolInput } from '../schemas';
+import { createToolInput, updateToolInput } from '../validators';
 import { ConflitError, NotFoundError } from '../errors';
 import { toolRepository } from '../repositories';
 import { IToolImg } from '../interfaces/tool.interface';
@@ -11,7 +11,7 @@ export const toolService = {
         const isExist = await toolRepository.isExistByName(userId, toolData.toolName);
         if (isExist) throw new ConflitError('a tool with this name already exist');
 
-        const savedImage = await cloudinaryService.upload(file, 'tools');
+        const savedImage = await cloudinaryService.uploadFile(file, 'tools');
         await cleanupFile(file.path);
         const imgData: IToolImg = {
             toolImageUrl: savedImage.secure_url,
@@ -33,7 +33,7 @@ export const toolService = {
         const existingTool = await toolRepository.findById(id, userId);
         if (!existingTool) throw new NotFoundError('Tool not found');
 
-        await cloudinaryService.delete(existingTool.toolPublicId);
+        await cloudinaryService.deleteFile(existingTool.toolPublicId);
         return await toolRepository.delete(id, userId);
     },
 
@@ -47,11 +47,11 @@ export const toolService = {
         if (file) {
             // delete image on cloudinary with public_id in db
             if (existingTool.toolPublicId) {
-                await cloudinaryService.delete(existingTool.toolPublicId);
+                await cloudinaryService.deleteFile(existingTool.toolPublicId);
             }
 
             // upload withnew image
-            const savedImage = await cloudinaryService.upload(file, 'tools');
+            const savedImage = await cloudinaryService.uploadFile(file, 'tools');
 
             await cleanupFile(file.path);
 

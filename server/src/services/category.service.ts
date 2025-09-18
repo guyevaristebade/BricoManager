@@ -1,40 +1,26 @@
-import { ApiResponse } from '../interfaces';
+import { Category } from '@prisma/client';
 import { categoryRepository } from '../repositories';
+import { categoryInput } from 'validators';
 
 export const categoryService = {
-    findAll: async () => {
-        const apiResponse: ApiResponse = {
-            success: false,
-            status: 500,
-            data: null,
-            timestamp: new Date().toISOString(),
-        };
-
-        const categories = await categoryRepository.findAll();
-
-        apiResponse.data = categories;
-        apiResponse.success = true;
-        apiResponse.status = 200;
-        apiResponse.message = 'Categories retrieved successfully';
-
-        return apiResponse;
+    findAll: async (): Promise<Category[]> => {
+        return await categoryRepository.findAll();
     },
 
-    findById: async (id: string) => {
-        const apiResponse: ApiResponse = {
-            success: false,
-            status: 500,
-            data: null,
-            timestamp: new Date().toISOString(),
-        };
+    findById: async (id: string): Promise<Category | null> => {
+        return await categoryRepository.findById(id);
+    },
 
-        const category = await categoryRepository.findById(id);
+    // only admin
+    create: async (categoryData: categoryInput): Promise<Category> => {
+        return await categoryRepository.create(categoryData);
+    },
 
-        apiResponse.data = category;
-        apiResponse.success = true;
-        apiResponse.status = 200;
-        apiResponse.message = 'Category retrieved successfully';
+    update: async (id: string, categoryData: categoryInput): Promise<Category> => {
+        return await categoryRepository.update(id, categoryData);
+    },
 
-        return apiResponse;
+    delete: async (id: string): Promise<Category> => {
+        return await categoryRepository.delete(id);
     },
 };

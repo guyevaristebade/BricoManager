@@ -1,7 +1,7 @@
 import { Location } from '@prisma/client';
 import prisma from '../config/db.config';
 import { LocationImgData, UpdateLocationData } from '../interfaces';
-import { locationInput } from 'schemas';
+import { locationInput } from 'validators';
 
 export const locationRepository = {
     create: async (userId: string, data: locationInput, locationImgData?: LocationImgData): Promise<Location> => {

@@ -1,7 +1,7 @@
 import { profileRepository, userRepository } from 'repositories';
 import { UnauthorizedError } from '../errors';
 import { removePassword } from 'utils';
-import { editUserInput } from 'schemas/user.schema';
+import { editUserInput } from 'validators/user.schema';
 
 export const userService = {
     getUserInfo: async (userId: string) => {

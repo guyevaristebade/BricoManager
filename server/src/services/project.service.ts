@@ -1,6 +1,6 @@
 import { Project } from '@prisma/client';
 import { projectRepository } from '../repositories';
-import { createProjectInput, updateProjectInput } from '../schemas';
+import { createProjectInput, updateProjectInput } from '../validators';
 import { cloudinaryService } from './cloudinary.service';
 import { cleanupFile } from '../helpers';
 import { ConflitError, NotFoundError } from '../errors';
@@ -20,7 +20,7 @@ export const projectService = {
         let imgData;
 
         if (file) {
-            const savedImage = await cloudinaryService.upload(file, 'project');
+            const savedImage = await cloudinaryService.uploadFile(file, 'project');
             imgData = {
                 projectImgUrl: savedImage.secure_url,
                 projectPublicId: savedImage.public_id,
@@ -49,7 +49,7 @@ export const projectService = {
 
         if (file) {
             // Upload nouvelle image
-            const savedImage = await cloudinaryService.upload(file, 'project');
+            const savedImage = await cloudinaryService.uploadFile(file, 'project');
             await cleanupFile(file.path);
 
             imgData = {
@@ -60,7 +60,7 @@ export const projectService = {
 
         // Supprimer l'ancienne image SEULEMENT après succès du nouvel upload
         if (isExistById.projectPublicId) {
-            await cloudinaryService.delete(isExistById.projectPublicId);
+            await cloudinaryService.deleteFile(isExistById.projectPublicId);
         }
 
         let project = await projectRepository.update(id, userId, updateData, imgData);
@@ -81,7 +81,7 @@ export const projectService = {
         if (!existingProject) throw new NotFoundError('Project not found');
 
         if (existingProject.projectPublicId) {
-            await cloudinaryService.delete(existingProject.projectPublicId);
+            await cloudinaryService.deleteFile(existingProject.projectPublicId);
         }
         return await projectRepository.delete(id, userId);
     },

@@ -1,6 +1,6 @@
 import { Project } from '@prisma/client';
 import prisma from '../config/db.config';
-import { createProjectInput, updateProjectInput } from '../schemas';
+import { createProjectInput, updateProjectInput } from '../validators';
 import { IProjectData } from '../interfaces';
 
 export const projectRepository = {

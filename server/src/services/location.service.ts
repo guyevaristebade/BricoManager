@@ -1,9 +1,9 @@
-import { locationInput, updateLocationInput } from '../schemas';
+import { locationInput, updateLocationInput } from '../validators';
 import { LocationImgData } from '../interfaces';
 import { ConflitError, NotFoundError } from '../errors';
 import { cloudinaryService } from './cloudinary.service';
 import { locationRepository, toolRepository } from '../repositories';
-import { cleanupFile } from 'helpers';
+import { cleanupFile } from '../helpers';
 import { Location, Tool } from '@prisma/client';
 
 export const locationService = {
@@ -21,7 +21,7 @@ export const locationService = {
 
         if (file) {
             // upload location image on cloudinary
-            const savedImage = await cloudinaryService.upload(file, 'location');
+            const savedImage = await cloudinaryService.uploadFile(file, 'location');
             locationImgData = {
                 locationImgUrl: savedImage.secure_url,
                 locationPublicId: savedImage.public_id,
@@ -63,14 +63,14 @@ export const locationService = {
         let locationImgData: LocationImgData | undefined;
 
         if (file) {
-            const savedImage = await cloudinaryService.upload(file, 'location');
+            const savedImage = await cloudinaryService.uploadFile(file, 'location');
             locationImgData = {
                 locationImgUrl: savedImage.secure_url,
                 locationPublicId: savedImage.public_id,
             };
 
             if (existingLocation.locationPublicId) {
-                await cloudinaryService.delete(existingLocation.locationPublicId);
+                await cloudinaryService.deleteFile(existingLocation.locationPublicId);
             }
 
             await cleanupFile(file.path);
@@ -91,7 +91,7 @@ export const locationService = {
         if (countTools > 0) throw new Error('Cannot delete location: tools are still associated with this location');
 
         if (existingLocation.locationPublicId) {
-            await cloudinaryService.delete(existingLocation.locationPublicId);
+            await cloudinaryService.deleteFile(existingLocation.locationPublicId);
         }
 
         await locationRepository.delete(id, userId);

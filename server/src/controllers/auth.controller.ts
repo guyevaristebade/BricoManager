@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { authService } from '../services';
-import { registerSchema } from '../schemas';
+import { registerSchema } from '../validators';
 import { generateCookie } from '../helpers';
 
 export const authController = {

@@ -1,4 +1,4 @@
-import { locationSchema } from '../schemas';
+import { locationSchema } from '../validators';
 import { locationService } from '../services';
 import { Request, NextFunction, Response } from 'express';
 

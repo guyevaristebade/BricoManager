@@ -1,5 +1,5 @@
 import { ConflitError, NotFoundError, UnauthorizedError } from '../errors';
-import { loginInput, RegisterInput } from '../schemas';
+import { loginInput, RegisterInput } from '../validators';
 import { ITokens, UserPayload, UserPayloadWithTokens } from '../interfaces';
 import { generateAccessToken, generateRefreshToken, storeRefreshToken, hashPassword, compareHash } from '../helpers';
 import { User } from '@prisma/client';

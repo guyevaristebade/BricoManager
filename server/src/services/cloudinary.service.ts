@@ -3,7 +3,7 @@ import cloudinary from '../config/cloudinary.config';
 import { getCloudinaryOptions } from '../utils';
 
 export const cloudinaryService = {
-    upload: async (file: Express.Multer.File, storageFileName: string): Promise<UploadApiResponse> => {
+    uploadFile: async (file: Express.Multer.File, storageFileName: string): Promise<UploadApiResponse> => {
         const options = getCloudinaryOptions(storageFileName);
 
         try {
@@ -15,7 +15,7 @@ export const cloudinaryService = {
         }
     },
 
-    delete: async (public_id: string): Promise<void> => {
+    deleteFile: async (public_id: string): Promise<void> => {
         try {
             await cloudinary.uploader.destroy(public_id);
 

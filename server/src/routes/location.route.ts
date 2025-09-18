@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authenticatedUser, validateWithZod } from '../middlewares';
 import { locationController } from '../controllers';
 import { upload } from '../helpers';
-import { locationSchema } from '../schemas';
+import { locationSchema } from '../validators';
 
 export const locationRouter = Router();
 

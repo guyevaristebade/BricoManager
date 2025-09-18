@@ -1,6 +1,6 @@
 import prisma from '../config/db.config';
 import { IToolImg } from '../interfaces';
-import { createToolInput, updateToolInput } from '../schemas';
+import { createToolInput, updateToolInput } from '../validators';
 import { Tool } from '@prisma/client';
 
 export const toolRepository = {

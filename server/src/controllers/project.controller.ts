@@ -1,4 +1,4 @@
-import { createProjectSchema, updateProjectSchema } from '../schemas';
+import { createProjectSchema, updateProjectSchema } from '../validators';
 import { RequestWithUser } from '../interfaces';
 import { projectService } from '../services';
 import { NextFunction, Response } from 'express';

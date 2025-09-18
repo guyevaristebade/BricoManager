@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticatedUser, refreshTokenValidation, validateWithZod } from '../middlewares';
 import { authController } from '../controllers';
-import { loginSchema, registerSchema } from 'schemas';
+import { loginSchema, registerSchema } from 'validators';
 
 export const authRouter = Router();
 

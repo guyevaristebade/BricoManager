@@ -1,4 +1,4 @@
-import { editUserInput } from 'schemas/user.schema';
+import { editUserInput } from 'validators/user.schema';
 import prisma from '../config/db.config';
 import { User } from '@prisma/client';
 

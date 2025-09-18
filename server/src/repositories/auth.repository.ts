@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { RegisterInput, loginInput } from '../schemas';
+import { RegisterInput, loginInput } from '../validators';
 import prisma from '../config/db.config';
 
 export const authRepository = {

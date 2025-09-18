@@ -1,4 +1,4 @@
-import { createToolSchema, updateToolSchema } from '../schemas';
+import { createToolSchema, updateToolSchema } from '../validators';
 import { toolService } from '../services';
 import { NextFunction, Response, Request } from 'express';
 
