@@ -1,12 +1,11 @@
-import { authenticatedUser } from '../middlewares';
+import { authenticatedUser, checkRole } from '../middlewares';
 import { Router } from 'express';
 import { categoryController } from '../controllers';
 
 export const categoryRouter = Router();
 
-// Routes for categories (example routes, adjust as needed)
 categoryRouter.get('/', authenticatedUser, categoryController.findAll);
 categoryRouter.get('/:id', authenticatedUser, categoryController.findById);
-// categoryRouter.post('/', authenticatedUser, createCategoryController);
-// categoryRouter.put('/:categoryId', authenticatedUser, editCategoryController);
-// categoryRouter.delete('/:categoryId', authenticatedUser, deleteCategoryController);
+categoryRouter.post('/', authenticatedUser, checkRole('ADMIN'), categoryController.create);
+categoryRouter.put('/:id', authenticatedUser, checkRole('ADMIN'), categoryController.update);
+categoryRouter.delete('/:id', authenticatedUser, checkRole('ADMIN'), categoryController.delete);
