@@ -1,4 +1,4 @@
-import prisma from '../src/config/db.config';
+import prisma from '../src/config/db';
 
 // Données de seed pour les catégories d'outils - Collection complète
 const categoriesData = [

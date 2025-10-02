@@ -13,20 +13,10 @@
         "ignoreDeprecations": "6.0",
         "moduleResolution": "node",
         "baseUrl": "./src",
-        "typeRoots": ["./src/types", "./node_modules/@types"]
-        // "paths": {
-        //     "@config/*": ["config/*"],
-        //     "@middlewares/*": ["middlewares/*"],
-        //     "@controllers/*": ["controllers/*"],
-        //     "@routes/*": ["routes/*"],
-        //     "@errors/*": ["errors/*"],
-        //     "@schemas/*": ["schemas/*"],
-        //     "@services/*": ["services/*"],
-        //     "@helpers/*": ["helpers/*"],
-        //     "@types/*": ["types/*"],
-        //     "@repositories/*": ["repositories/*"],
-        //     "@interfaces/*": ["interfaces/*"]
-        // }
+        "typeRoots": ["./src/common/types", "./node_modules/@types"], // permet de faire connaitre une variable qu'on rajoute à express
+        "paths": {
+            "@*": ["*"]
+        }
     },
     "include": ["src/**/*", "tests"],
     "exclude": ["node_modules", "tests"]
