@@ -10,20 +10,14 @@
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
         "sourceMap": true,
+        "ignoreDeprecations": "6.0",
         "moduleResolution": "node",
         "baseUrl": "./src",
+        "typeRoots": ["./src/common/types", "./node_modules/@types"], // permet de faire connaitre une variable qu'on rajoute à express
         "paths": {
-            "@config/*": ["config/*"],
-            "@middlewares/*": ["middlewares/*"],
-            "@controllers/*": ["controllers/*"],
-            "@routes/*": ["routes/*"],
-            "@errors/*": ["errors/*"],
-            "@schemas/*": ["schemas/*"],
-            "@services/*": ["services/*"],
-            "@helpers/*": ["helpers/*"],
-            "@types/*": ["types/*"]
+            "@*": ["*"]
         }
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "src/tests"]
+    "include": ["src/**/*", "tests"],
+    "exclude": ["node_modules", "tests"]
 }
