@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { authService } from '@modules/auth';
 import { generateCookie } from '@common/utils/generateCookie';
-import { successApiResponse } from '@common/utils';
+import { successApiResponse } from '@common/utils/apiResponse';
 
 export const authController = {
     // brancher un service d'envoi de mail pour envoyer un mail de confirmation d'inscription

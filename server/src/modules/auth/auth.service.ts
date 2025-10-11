@@ -1,5 +1,5 @@
 import { HttpException } from '@common/errors/httpException';
-import { ITokens, UserPayload, UserPayloadWithTokens, loginInput, RegisterInput, authRepository } from '@modules/auth';
+import { ITokens, UserPayload, loginInput, RegisterInput, authRepository } from '@modules/auth';
 import { generateAccessToken, generateRefreshToken } from '@common/utils/jwt';
 import { hash, compareHash } from '@common/utils/crypto';
 import { profileRepository, userRepository } from '@modules/users';
@@ -34,12 +34,12 @@ export const authService = {
         // est-ce qu'un utilisateur existe ?
         const existingUser = await userRepository.findByEmail(email);
 
-        if (!existingUser) throw new HttpException('Not Found Error', 404, "Vous n'avez peut-être pas de compte !");
+        if (!existingUser) throw new HttpException('Unauthorized', 401, 'Email ou mot de passe incorrecte');
 
         // comparons les mdp
         const isPasswordValid = await compareHash(password, existingUser.password);
 
-        if (!isPasswordValid) throw new HttpException('Unauthorized Error', 401, 'Email ou mot de passe incorrecte');
+        if (!isPasswordValid) throw new HttpException('Unauthorized', 401, 'Email ou mot de passe incorrecte');
 
         // extraction de certaines informations sur l'utilisateur
         const userPayload: UserPayload = {

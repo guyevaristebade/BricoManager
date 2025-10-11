@@ -7,6 +7,7 @@ interface IResponseSuccessData {
     data?: any;
     path?: string;
 }
+
 export const successApiResponse = (res: Response, { status, message, data, path }: IResponseSuccessData) => {
     return res.status(status).json({
         success: true,
@@ -25,6 +26,7 @@ interface IResponseErrorData {
     errors?: any;
     path?: string;
 }
+
 export const errorApiResponse = (res: Response, { status, message, errors, path }: IResponseErrorData) => {
     return res.status(status).json({
         success: false,

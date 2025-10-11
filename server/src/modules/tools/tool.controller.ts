@@ -1,4 +1,4 @@
-import { successApiResponse } from '@common/utils';
+import { successApiResponse } from '@common/utils/apiResponse';
 import { toolService } from '@modules/tools';
 import { NextFunction, Response, Request } from 'express';
 

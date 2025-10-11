@@ -1,4 +1,4 @@
-import { successApiResponse } from '@common/utils';
+import { successApiResponse } from '@common/utils/apiResponse';
 import { locationService } from '@modules/locations';
 import { Request, NextFunction, Response } from 'express';
 

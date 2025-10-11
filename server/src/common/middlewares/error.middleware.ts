@@ -1,16 +1,18 @@
 import { ZodError } from 'zod';
 import { Request, Response, NextFunction } from 'express';
-import { errorApiResponse } from '@common/utils';
+import { errorApiResponse } from '@common/utils/apiResponse';
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof ZodError) {
-        const message = err.issues.map((issue) => issue.message).join(', ');
-        const errors = JSON.parse(err as unknown as string);
+        const errors = err.issues.map((issue) => ({
+            path: issue.path.join('.'),
+            message: issue.message,
+        }));
 
         errorApiResponse(res, {
             status: 400,
-            message,
-            errors: errors,
+            message: 'Données invalides',
+            errors,
             path: req.originalUrl,
         });
     }
