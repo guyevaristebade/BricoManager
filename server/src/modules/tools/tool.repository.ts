@@ -1,6 +1,6 @@
 import { Tool } from '@prisma/client';
 import prisma from '@config/db';
-import { IToolImg, createToolInput, updateToolInput } from '@modules/tools';
+import { IToolImg, ToolFilters, createToolInput, updateToolInput } from '@modules/tools';
 
 export const toolRepository = {
     create: async (userId: string, createToolData: createToolInput, imgData: IToolImg): Promise<Tool> => {
@@ -13,30 +13,43 @@ export const toolRepository = {
         });
     },
 
-    findAll: async (userId: string): Promise<Tool[]> => {
+    findAll: async (userId: string, filters: ToolFilters): Promise<Tool[]> => {
+        const { categoryId, locationId, toolStatus } = filters;
         // rajouter des filtres
         return await prisma.tool.findMany({
             where: {
                 userId,
-            },
-        });
-    },
-
-    findAllWithDetails: async (userId: string): Promise<Tool[]> => {
-        return await prisma.tool.findMany({
-            where: {
-                userId,
+                ...(categoryId && { categoryId }),
+                ...(locationId && { locationId }),
+                ...(toolStatus && { toolStatus }),
             },
             include: {
                 category: true,
                 location: true,
             },
+            orderBy: { toolName: 'asc' },
         });
     },
+
+    // findAllWithDetails: async (userId: string): Promise<Tool[]> => {
+    //     return await prisma.tool.findMany({
+    //         where: {
+    //             userId,
+    //         },
+    //         include: {
+    //             category: true,
+    //             location: true,
+    //         },
+    //     });
+    // },
 
     findById: async (id: string, userId: string): Promise<Tool | null> => {
         return await prisma.tool.findUnique({
             where: { id, userId },
+            include: {
+                category: true,
+                location: true,
+            },
         });
     },
 

@@ -28,7 +28,7 @@ export const authController = {
             successApiResponse(res, {
                 status: 200,
                 message: 'Utilisateur connecté avec succès',
-                data: accessToken,
+                data: { accessToken },
             });
         } catch (error) {
             next(error);

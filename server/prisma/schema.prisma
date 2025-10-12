@@ -42,7 +42,7 @@ model UserProfile{
   public_id String?
   darkMode  Boolean  @default(false)
 
-  user   User @relation(fields: [userId], references: [id]) // un utilisateur à un profile unique 
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade) // un utilisateur à un profile unique 
 }
 
 // Représente un projet 
@@ -81,11 +81,13 @@ model Tool{
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  user              User @relation(fields: [userId], references: [id]) // un outil appartient à un utilisateur
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade) // un outil appartient à un utilisateur
   category          Category @relation(fields: [toolCategoryId], references: [id]) // un outil appartient à une catégory d'outil
-  location          Location @relation(fields: [locationId], references: [id]) // un outil appartient à un emplacement
+  location          Location @relation(fields: [locationId], references: [id], onDelete: Cascade) // un outil appartient à un emplacement
 
   LoanCartItem    LoanCartItem[] // un tool peut apparaitre dans plusieurs LoanCartItem
+
+  @@index([userId, toolCategoryId, locationId])
 }
 
 // représente l'emplacement d'un outil
@@ -98,6 +100,7 @@ model Location {
   tools Tool[] // un emplacement peut contenir plusieurs outils
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade) // un emplacement appartient à un utilisateur
+  @@index([userId])
 }
 
 
@@ -131,7 +134,8 @@ model Loan{
   createdAt           DateTime @default(now())
   updateAt            DateTime @updatedAt
 
-  Borrower                Borrower    @relation(fields: [borrowerId], references: [id]) // un emprunt concerne un emprunteur unique  
+  Borrower                Borrower    @relation(fields: [borrowerId], references: [id], onDelete: Cascade) // un emprunt concerne un emprunteur unique  
+  @@index([borrowerId])
 }
 
 // répresente un item dans un emprunt
@@ -144,6 +148,8 @@ model LoanCartItem{
   returnDate          DateTime? // permet de gérer le cas ou parmi un emprunt de 3 outils 2 sont retournés, cela évite de casser le prêt  
   cart                Loan     @relation(fields: [cartId], references: [id], onDelete: Cascade) // un LoanCartItem appartient à un panier unique  
   tool                Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)  // un LoanCartItem concerne un outil unique
+
+  @@index([toolId, cartId])
 }
 
 

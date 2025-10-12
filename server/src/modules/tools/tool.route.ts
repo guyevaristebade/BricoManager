@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticatedUser } from '@common/middlewares/auth.middleware';
-import { createToolSchema, toolController } from '@modules/tools';
+import { createToolSchema, toolController, updateToolSchema } from '@modules/tools';
 import { upload } from '@common/utils/file';
 import { zodValidator } from '@common/middlewares/zodValidator.middleware';
 import { updateLocationSchema } from '@modules/locations';
@@ -19,6 +19,6 @@ toolRouter.patch(
     '/:id',
     authenticatedUser,
     upload.single('image'),
-    zodValidator(updateLocationSchema),
+    zodValidator(updateToolSchema),
     toolController.update
 );

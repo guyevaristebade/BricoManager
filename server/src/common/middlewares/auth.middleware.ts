@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { UserPayload } from '@modules/auth';
 import { HttpException } from '@common/errors/httpException';
@@ -12,7 +11,7 @@ export const authenticatedUser = (req: Request, res: Response, next: NextFunctio
 
     try {
         // on vérifie la validité du token
-        const decoded = verifyToken(token);
+        const decoded: UserPayload = verifyToken(token);
 
         // s'il est valide on attache ses information à req
         // Ici on étend dynamiquement l'objet Request avec la propriété user

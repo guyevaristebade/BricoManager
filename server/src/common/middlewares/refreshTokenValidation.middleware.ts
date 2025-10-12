@@ -3,6 +3,7 @@ import { UserPayload } from '@modules/auth';
 import jwt from 'jsonwebtoken';
 import { HttpException } from '@common/errors/httpException';
 import env from '@config/env';
+import { verifyRefreshToken } from '@common/utils/jwt';
 
 export const refreshTokenValidation = (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refresh_token;
@@ -12,8 +13,7 @@ export const refreshTokenValidation = (req: Request, res: Response, next: NextFu
 
     try {
         // on vérifie la validité du token
-        const decoded = jwt.verify(refreshToken, env.tokens.refreshSecret) as UserPayload;
-
+        const decoded = verifyRefreshToken(refreshToken);
         // s'il est valide on attache ses information à req
         req.user = decoded;
         next();

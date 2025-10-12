@@ -1,5 +1,5 @@
 import { Tool } from '@prisma/client';
-import { IToolImg } from './tool.interface';
+import { IToolImg, ToolFilters } from './tool.interface';
 import { cleanupFile } from '@common/utils/file';
 import { HttpException } from '@common/errors/httpException';
 import { cloudinaryService } from '@common/services/cloudinary.service';
@@ -9,6 +9,7 @@ import { validateIds } from '@common/utils/validateIds';
 export const toolService = {
     create: async (userId: string, toolData: createToolInput, file: Express.Multer.File): Promise<Tool> => {
         validateIds({ userId });
+        if (!file) throw new HttpException('Bad Request Error', 400, "L'outil doit avoir une image");
         const isExist = await toolRepository.isExistByName(userId, toolData.toolName);
         if (isExist) throw new HttpException('Conflit Error', 409, 'Un outil existe déjà !');
 
@@ -24,15 +25,15 @@ export const toolService = {
         return await toolRepository.create(userId, toolData, imgData);
     },
 
-    findAll: async (userId: string): Promise<Tool[]> => {
+    findAll: async (userId: string, filters: ToolFilters): Promise<Tool[]> => {
         validateIds({ userId });
-        return await toolRepository.findAll(userId);
+        return await toolRepository.findAll(userId, filters);
     },
 
-    findAllWithDetails: async (userId: string): Promise<Tool[]> => {
-        validateIds({ userId });
-        return await toolRepository.findAllWithDetails(userId);
-    },
+    // findAllWithDetails: async (userId: string): Promise<Tool[]> => {
+    //     validateIds({ userId });
+    //     return await toolRepository.findAllWithDetails(userId);
+    // },
 
     findById: async (id: string, userId: string): Promise<Tool | null> => {
         validateIds({ id, userId });

@@ -22,6 +22,12 @@ export const userRepository = {
         });
     },
 
+    deleteUser: async (userId: string): Promise<void> => {
+        await prisma.user.delete({
+            where: { id: userId },
+        });
+    },
+
     updateUserInfo: async (userId: string, data: updateUserInput) => {
         return await prisma.user.update({
             where: { id: userId },

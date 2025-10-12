@@ -33,8 +33,10 @@ export const authService = {
 
         // est-ce qu'un utilisateur existe ?
         const existingUser = await userRepository.findByEmail(email);
-
         if (!existingUser) throw new HttpException('Unauthorized', 401, 'Email ou mot de passe incorrecte');
+
+        // const isEmailVerified = existingUser.isVerified;
+        // if (!isEmailVerified) throw new HttpException('Forbidden', 403, "Vous n'avez pas encore validé votre adresse email");
 
         // comparons les mdp
         const isPasswordValid = await compareHash(password, existingUser.password);
@@ -44,8 +46,6 @@ export const authService = {
         // extraction de certaines informations sur l'utilisateur
         const userPayload: UserPayload = {
             id: existingUser.id,
-            email: existingUser.email,
-            name: existingUser.name,
         };
 
         // génération des tokens
@@ -55,8 +55,11 @@ export const authService = {
         // mise à jour de la date de login
         await userRepository.updateLoginAt(existingUser.id);
 
+        // hasher le refreshToken avant son stockage en base
+        const hashedRefreshToken = await hash(refreshToken);
+
         // stockage du refreshToken en base
-        await authRepository.storeRefreshToken(existingUser.id, refreshToken);
+        await authRepository.storeRefreshToken(existingUser.id, hashedRefreshToken);
 
         return { refreshToken, accessToken };
     },
@@ -65,7 +68,6 @@ export const authService = {
         validateIds({ userId });
 
         const user = await userRepository.getUser(userId);
-
         if (!user || !user.refreshToken) throw new HttpException('Unauthorized', 401, 'Accès refusé');
 
         const compareTokens = await compareHash(refreshToken, user.refreshToken);
@@ -73,14 +75,13 @@ export const authService = {
 
         const userPayload: UserPayload = {
             id: user.id,
-            email: user.email,
-            name: user.name,
         };
 
         const newAccessToken = generateAccessToken(userPayload);
         const newRefreshToken = generateRefreshToken(userPayload);
 
-        await authRepository.storeRefreshToken(userId, newRefreshToken);
+        const hashedNewRefreshToken = await hash(newRefreshToken);
+        await authRepository.storeRefreshToken(userId, hashedNewRefreshToken);
 
         return { accessToken: newAccessToken };
     },

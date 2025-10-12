@@ -1,5 +1,5 @@
 import { successApiResponse } from '@common/utils/apiResponse';
-import { toolService } from '@modules/tools';
+import { toolService } from '@modules/tools/tool.service';
 import { NextFunction, Response, Request } from 'express';
 
 export const toolController = {
@@ -17,7 +17,8 @@ export const toolController = {
     findAll: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId = req.user!.id;
-            const tools = await toolService.findAll(userId);
+            const filters = req.query;
+            const tools = await toolService.findAll(userId, filters);
             successApiResponse(res, { status: 200, message: 'Outils récupérés avec succès', data: tools });
         } catch (error) {
             next(error);

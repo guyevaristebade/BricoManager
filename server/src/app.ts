@@ -11,6 +11,7 @@ import { toolRouter } from '@modules/tools';
 import { categoryRouter } from '@modules/categories';
 import { locationRouter } from '@modules/locations';
 import { projectRouter } from '@modules/projects';
+import helmet from 'helmet';
 
 dotenv.config();
 
@@ -28,9 +29,10 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(limiter);
+app.use(helmet());
 
 app.get('/api/v1/test', (req, res) => {
-    res.json({ message: 'Server is working!' });
+    res.json({ message: 'Server is working successfully!' });
 });
 
 app.use('/api/v1/auth', authRouter);

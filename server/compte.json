@@ -1,0 +1,14 @@
+{
+    "comptes": [
+        {
+            "name": "Jane",
+            "email": "jane@gmail.com",
+            "password": "JaneDoe2025."
+        },
+        {
+            "name": "Guy",
+            "email": "guy2@gmail.com",
+            "password": "#Maman2025"
+        }
+    ]
+}

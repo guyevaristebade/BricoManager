@@ -174,6 +174,7 @@ const categoriesData = [
     { categoryName: 'Quincaillerie' },
     { categoryName: 'Visserie et boulonnerie' },
     { categoryName: 'Matériaux divers' },
+    { categoryName: 'Sets et boîtes à outils' },
     { categoryName: 'Autres' },
 ];
 
