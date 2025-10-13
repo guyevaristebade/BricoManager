@@ -38,8 +38,14 @@ export const authController = {
     refreshToken: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId = req.user!.id;
-            const refreshToken = req.cookies.refresh_token;
-            const { accessToken } = await authService.refresh(userId, refreshToken);
+            const refreshTokenCooike = req.cookies.refresh_token;
+            const { accessToken, refreshToken } = await authService.refresh(userId, refreshTokenCooike);
+
+            // on met à jour le cookie avec le nouveau refreshToken
+            // pour une rotation complète du refreshToken
+            generateCookie(refreshToken, res);
+
+            // on envoie le nouveau accessToken au client
             successApiResponse(res, {
                 status: 200,
                 message: 'Token rafraîchi avec succès',

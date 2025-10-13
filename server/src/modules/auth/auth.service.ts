@@ -1,6 +1,6 @@
 import { HttpException } from '@common/errors/httpException';
 import { ITokens, UserPayload, loginInput, RegisterInput, authRepository } from '@modules/auth';
-import { generateAccessToken, generateRefreshToken } from '@common/utils/jwt';
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '@common/utils/jwt';
 import { hash, compareHash } from '@common/utils/crypto';
 import { profileRepository, userRepository } from '@modules/users';
 import { validateIds } from '@common/utils/validateIds';
@@ -64,26 +64,38 @@ export const authService = {
         return { refreshToken, accessToken };
     },
 
-    refresh: async (userId: string, refreshToken: string): Promise<{ accessToken: string }> => {
+    refresh: async (userId: string, refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> => {
         validateIds({ userId });
 
         const user = await userRepository.getUser(userId);
         if (!user || !user.refreshToken) throw new HttpException('Unauthorized', 401, 'Accès refusé');
 
+        // vérifier si le refreshToken est valide
+        const verifyToken = verifyRefreshToken(refreshToken);
+        if (!verifyToken) throw new HttpException('Unauthorized', 401, 'Accès refusé');
+
+        // comparer le refreshToken fourni avec celui en base
+        // détection de réutilisation de token
         const compareTokens = await compareHash(refreshToken, user.refreshToken);
-        if (!compareTokens) throw new HttpException('Unauthorized', 401, 'Accès refusé');
+        if (!compareTokens) {
+            console.error("🚨 Réutilisation de token détectée pour l'utilisateur: ", userId);
+            await authRepository.deleteRefreshToken(userId);
+            throw new HttpException('Unauthorized', 401, 'Accès refusé');
+        }
 
         const userPayload: UserPayload = {
             id: user.id,
         };
 
+        // génération de nouveaux tokens
         const newAccessToken = generateAccessToken(userPayload);
         const newRefreshToken = generateRefreshToken(userPayload);
 
+        // hasher le nouveau refreshToken avant son stockage en base
         const hashedNewRefreshToken = await hash(newRefreshToken);
         await authRepository.storeRefreshToken(userId, hashedNewRefreshToken);
 
-        return { accessToken: newAccessToken };
+        return { accessToken: newAccessToken, refreshToken: newRefreshToken };
     },
 
     logout: async (userId: string): Promise<void> => {
