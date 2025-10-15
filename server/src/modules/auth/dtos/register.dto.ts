@@ -2,9 +2,8 @@ import z from 'zod';
 
 export const registerSchema = z.object({
     email: z
-        .string()
         .email()
-        .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), 'format email invalide')
+        // .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), 'format email invalide')
         .refine((e) => !e.includes('yopmail.com'), 'email invalide'),
     name: z.string(),
     password: z

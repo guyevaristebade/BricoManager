@@ -1,4 +1,4 @@
-import { Tool } from '@prisma/client';
+import { Tool, ToolStatus } from '@prisma/client';
 import prisma from '@config/db';
 import { IToolImg, ToolFilters, createToolInput, updateToolInput } from '@modules/tools';
 
@@ -86,5 +86,31 @@ export const toolRepository = {
         });
 
         return tool !== null;
+    },
+
+    // changer le status de plusieurs outils en emprunter ou disponible
+    changeToolStatus: async (userId: string, toolIds: string[], status: ToolStatus): Promise<void> => {
+        await prisma.tool.updateMany({
+            where: {
+                userId,
+                id: { in: toolIds },
+            },
+            data: {
+                toolStatus: status,
+            },
+        });
+    },
+
+    // changer le status d'un outils en emprunter ou disponible
+    changeSingleToolStatus: async (userId: string, toolId: string, status: ToolStatus): Promise<void> => {
+        await prisma.tool.update({
+            where: {
+                id: toolId,
+                userId,
+            },
+            data: {
+                toolStatus: status,
+            },
+        });
     },
 };

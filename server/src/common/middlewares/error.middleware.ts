@@ -13,7 +13,6 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     console.error(`[Error ID: ${errorId}]`, {
         message: err?.message,
         name: err?.name,
-        stack: process.env.NODE_ENV === 'development' ? err?.stack : undefined,
         path: req.originalUrl,
         method: req.method,
         userId: req.user?.id,

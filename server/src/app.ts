@@ -12,6 +12,8 @@ import { categoryRouter } from '@modules/categories';
 import { locationRouter } from '@modules/locations';
 import { projectRouter } from '@modules/projects';
 import helmet from 'helmet';
+import { borrowerRouter } from '@modules/borrower/borrower.route';
+import { loanRouter } from '@modules/loan/loan.route';
 
 dotenv.config();
 
@@ -41,6 +43,8 @@ app.use('/api/v1/tools', toolRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/locations', locationRouter);
 app.use('/api/v1/projects', projectRouter);
+app.use('/api/v1/borrowers', borrowerRouter);
+app.use('/api/v1/loans', loanRouter);
 
 app.use(errorHandler);
 

@@ -24,7 +24,7 @@ model User {
   role      Role     @default(USER)
   refreshToken String? @unique
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt 
   loginAt DateTime @default(now())
 
   profile UserProfile? // un profile appartient à un utilisateur unique
@@ -32,6 +32,9 @@ model User {
   project Project[]
   Tool Tool[]
   Location Location[]
+  Borrower Borrower[]
+
+  Loan Loan[]
 }
 
 // Représente le profil d'un utilisateur 
@@ -61,6 +64,11 @@ model Project {
   createdAt           DateTime @default(now())
 
   user                User @relation(fields: [userId], references: [id] ,onDelete: Cascade)
+
+  @@index([userId, projectStatus])        // NOUVEAU : Projets par status
+  @@index([userId, projectStartDate])     // NOUVEAU : Tri chronologique
+  @@index([userId, createdAt])            // NOUVEAU : Projets récents
+  @@unique([id, userId])                 // Index unique composite pour la sécurité multi-tenant
 }
 
 
@@ -85,10 +93,15 @@ model Tool{
   category          Category @relation(fields: [toolCategoryId], references: [id]) // un outil appartient à une catégory d'outil
   location          Location @relation(fields: [locationId], references: [id], onDelete: Cascade) // un outil appartient à un emplacement
 
-  LoanCartItem    LoanCartItem[] // un tool peut apparaitre dans plusieurs LoanCartItem
+  LoanItem    LoanItem[] // un tool peut apparaitre dans plusieurs LoanItem
 
-  @@index([userId, toolCategoryId, locationId])
+  // 🎯 Index principal : Couvre tous les patterns de filtrage
+  @@index([userId, toolCategoryId, locationId, toolStatus, toolName])
+  
+  // 📊 Index pour statistiques (optionnel)
+  @@index([userId, nbLoaning])
 }
+
 
 // représente l'emplacement d'un outil
 model Location {
@@ -100,7 +113,7 @@ model Location {
   tools Tool[] // un emplacement peut contenir plusieurs outils
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade) // un emplacement appartient à un utilisateur
-  @@index([userId])
+  @@unique([id, userId])
 }
 
 
@@ -115,41 +128,62 @@ model Category{
 // Représente un emprunteur 
 model Borrower{
   id              String   @id @default(cuid())
-  BorrowerName    String
-  BorrowerAdress  String
-  BorrowerTel     String
+  userId          String
+  firstName       String
+  lastName        String
+  address          String // dans le futur créer une table pivot contenant les information sur le lieu d'habitation du borrower
+  phone           String
+  email           String
   createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   Loan Loan[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) // un emprunteur appartient à un utilisateur
+  
+  @@index([userId, firstName,lastName]) 
+  @@unique([id, userId]) //  Index unique composite
 }
 
 
 // représente un emprunt
 model Loan{
-  id                  String   @id @default(cuid())
+  id                  String      @id @default(cuid())
+  userId              String
   borrowerId          String
-  items               LoanCartItem[]
-  loanStatus          LoanStatus @default(IN_PROGRESS)
+  loanStatus          LoanStatus      @default(IN_PROGRESS)
   loanDate            DateTime     @default(now())
   returnDate          DateTime?
   createdAt           DateTime @default(now())
-  updateAt            DateTime @updatedAt
+  updatedAt           DateTime @updatedAt
 
-  Borrower                Borrower    @relation(fields: [borrowerId], references: [id], onDelete: Cascade) // un emprunt concerne un emprunteur unique  
-  @@index([borrowerId])
+  loanItems           LoanItem[] 
+  borrower            Borrower    @relation(fields: [borrowerId], references: [id], onDelete: Cascade) // un emprunt concerne un emprunteur unique  
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade) // un emprunt appartient à un utilisateur
+
+
+  @@index([userId, borrowerId, loanStatus])
+  @@index([userId,borrowerId])
+  @@unique([id, userId]) // Index unique composite pour la sécurité multi-tenant
 }
 
 // répresente un item dans un emprunt
-model LoanCartItem{
+model LoanItem{
   id                  String    @id @default(cuid())
   toolId              String
-  cartId              String
-  itemStatus          LoanItemStatus @default(LOANED)
-  LoanDate          DateTime         @default(now())
+  loanId              String
+  itemStatus          LoanItemStatus @default(TO_BE_BORROWED)
+  loanDate            DateTime         @default(now())
   returnDate          DateTime? // permet de gérer le cas ou parmi un emprunt de 3 outils 2 sont retournés, cela évite de casser le prêt  
-  cart                Loan     @relation(fields: [cartId], references: [id], onDelete: Cascade) // un LoanCartItem appartient à un panier unique  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  loan                Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade) // un LoanCartItem appartient à un panier unique  
   tool                Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)  // un LoanCartItem concerne un outil unique
 
-  @@index([toolId, cartId])
+  @@index([loanId])              // Items d'un emprunt
+  @@index([toolId])              // Historique d'un outil
+  @@index([loanId, itemStatus])  // Items retournés/en cours
+  @@index([toolId, itemStatus])  // Vérifier si outil emprunté
 }
 
 
@@ -163,19 +197,22 @@ enum Role {
 
 enum ToolStatus {
   AVAILABLE // disponible
-  LOANED  // emprunté
-  BROKEN    // cassé
+  BORROWED // emprunté
+  RESERVED  // réservé
   LOST      // perdu
+  DAMAGED   // endommagé
+  MAINTENANCE // en maintenance
 }
 
 enum LoanStatus {
   IN_PROGRESS // En cours
-  RETURNED    // Retourné
+  PARTIALLY_RETURNED // Partiellement retourné, c'est lorsqu'un outil parmis un emprunt est retourné
+  COMPLETED    // Retourné
   CANCELLED   // Annulé
 }
 
 enum LoanItemStatus {
-  LOANED // Emprunté
+  TO_BE_BORROWED // Emprunté
   RETURNED // Retourné
   LOST     // Perdu
 }
