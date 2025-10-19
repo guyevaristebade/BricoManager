@@ -89,7 +89,7 @@ export const toolRepository = {
     },
 
     // changer le status de plusieurs outils en emprunter ou disponible
-    changeToolStatus: async (userId: string, toolIds: string[], status: ToolStatus): Promise<void> => {
+    changeToolsStatus: async (userId: string, toolIds: string[], status: ToolStatus): Promise<void> => {
         await prisma.tool.updateMany({
             where: {
                 userId,
@@ -101,16 +101,17 @@ export const toolRepository = {
         });
     },
 
-    // changer le status d'un outils en emprunter ou disponible
-    changeSingleToolStatus: async (userId: string, toolId: string, status: ToolStatus): Promise<void> => {
-        await prisma.tool.update({
+    // vérifier si les outils appartient à l'utilisateur courant
+    checkToolsBelongUser: async (userId: string, toolIds: string[]): Promise<number> => {
+        return prisma.tool.count({
             where: {
-                id: toolId,
                 userId,
-            },
-            data: {
-                toolStatus: status,
+                id: { in: toolIds },
             },
         });
+    },
+
+    checkToolsIsAvailable: async (userId: string, toolIds: string[]) => {
+        return prisma.tool.count();
     },
 };

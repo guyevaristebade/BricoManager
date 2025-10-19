@@ -9,7 +9,7 @@ export const loanRepository = {
                 user: { connect: { id: userId } },
                 borrower: { connect: { id: createLoanData.borrowerId } },
                 loanItems: {
-                    create: createLoanData.loanCartItems.map((item) => ({ tool: { connect: { id: item.toolId } } })),
+                    create: createLoanData.loanItems.map((item) => ({ tool: { connect: { id: item } } })),
                 },
             },
             include: { loanItems: { include: { tool: true } } },
